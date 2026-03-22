@@ -364,6 +364,8 @@ socket.on('init',d=>{
   strokes=d.strokes||[];
   $('#onlineNum').textContent=d.userCount;
   redrawAll();
+  // If someone already loaded an image before we joined, show it
+  if(d.image) showImg(d.image);
   showToast('Welcome '+myName+'! 👋');
 });
 socket.on('stroke',s=>{strokes.push(s);renderStroke(ctx,s);});
@@ -379,6 +381,8 @@ socket.on('live-seg',d=>{
 });
 socket.on('live-end',()=>{});
 socket.on('redraw',arr=>{strokes=arr;redrawAll();});
+socket.on('image-load',dataURL=>showImg(dataURL));   // someone else loaded an image
+socket.on('image-remove',()=>removeImg());           // someone else removed the image
 socket.on('user-count',n=>$('#onlineNum').textContent=n);
 socket.on('toast',msg=>showToast(msg));
 socket.on('cursor',d=>{
@@ -659,18 +663,34 @@ document.addEventListener('drop',e=>{
 function loadImg(file){
   const reader=new FileReader();
   reader.onload=ev=>{
-    imgEl.onload=()=>{
-      imgPane.classList.remove('hidden');
-      dividerBar.classList.remove('hidden');
-      // reset draw pane flex in case user resized previously
-      drawPane.style.flex='1';drawPane.style.width='';
-      imgPane.style.width='420px';
-      fitImg();
-      showToast('Image loaded! Scroll to zoom · Drag to pan 🖼️');
+    // Compress to max 1920px and JPEG 0.82 before sending — keeps payload small
+    const tmp=new Image();
+    tmp.onload=()=>{
+      const MAX=1920;
+      let w=tmp.width,h=tmp.height;
+      if(w>MAX||h>MAX){const s=MAX/Math.max(w,h);w=Math.round(w*s);h=Math.round(h*s);}
+      const offscreen=document.createElement('canvas');
+      offscreen.width=w;offscreen.height=h;
+      offscreen.getContext('2d').drawImage(tmp,0,0,w,h);
+      const dataURL=offscreen.toDataURL('image/jpeg',0.82);
+      showImg(dataURL);              // show locally
+      socket.emit('image-load',dataURL); // broadcast to everyone in the room
     };
-    imgEl.src=ev.target.result;
+    tmp.src=ev.target.result;
   };
   reader.readAsDataURL(file);
+}
+
+// Show the image panel — called both locally and when received from socket
+function showImg(dataURL){
+  imgEl.onload=()=>{
+    imgPane.classList.remove('hidden');
+    dividerBar.classList.remove('hidden');
+    drawPane.style.flex='1';drawPane.style.width='';
+    imgPane.style.width='420px';
+    fitImg();
+  };
+  imgEl.src=dataURL;
 }
 function fitImg(){
   const vw=imgVp.clientWidth||400,vh=imgVp.clientHeight||400;
@@ -709,10 +729,15 @@ window.addEventListener('mouseup',()=>{imgDrag=false;imgVp.classList.remove('gra
 window.addEventListener('touchend',()=>{imgDrag=false;});
 
 $('#removeImgBtn').addEventListener('click',()=>{
+  removeImg();
+  socket.emit('image-remove');   // tell everyone to remove it too
+});
+
+function removeImg(){
   imgPane.classList.add('hidden');dividerBar.classList.add('hidden');
   imgEl.src='';drawPane.style.flex='1';drawPane.style.width='';
   showToast('Image removed — full canvas restored.');
-});
+}
 
 /* ─── DIVIDER RESIZE ─── */
 dividerBar.addEventListener('mousedown',e=>{divDrag=true;dividerBar.classList.add('dragging');e.preventDefault();});

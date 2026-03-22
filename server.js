@@ -6,8 +6,11 @@ const os       = require('os');
 
 const app    = express();
 const server = http.createServer(app);
-const io     = new Server(server, { cors: { origin: '*' } });
-const PORT   = 3000;
+const io     = new Server(server, {
+  cors: { origin: '*' },
+  maxHttpBufferSize: 15e6   // 15 MB — needed for base64 image payloads
+});
+const PORT = 3000;
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -15,11 +18,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 const rooms = new Map();
 
 function getRoom(id) {
-  if (!rooms.has(id)) rooms.set(id, { strokes: [] });
+  if (!rooms.has(id)) rooms.set(id, { strokes: [], image: null });
   return rooms.get(id);
 }
 
-// ── Get your local network IP ────────────────────────────
+// ── Get local network IP ─────────────────────────────────
 function getLocalIP() {
   for (const ifaces of Object.values(os.networkInterfaces())) {
     for (const i of ifaces) {
@@ -45,9 +48,10 @@ io.on('connection', (socket) => {
     socket.join(roomId);
     const room = getRoom(roomId);
 
-    // Send existing board to the new user
+    // Send existing board state (strokes + image) to the new user
     socket.emit('init', {
       strokes:   room.strokes,
+      image:     room.image,       // ← send stored image to late joiners
       name:      userName,
       userCount: io.sockets.adapter.rooms.get(roomId)?.size || 1,
     });
@@ -57,17 +61,17 @@ io.on('connection', (socket) => {
     console.log(`✅  ${userName} joined room "${roomId}"`);
   });
 
-  // LIVE SEGMENT — each tiny segment of a pen stroke, forwarded instantly
+  // LIVE SEGMENT
   socket.on('live-seg', (data) => {
     if (currentRoom) socket.to(currentRoom).emit('live-seg', data);
   });
 
-  // LIVE END — stroke finished (client handles cleanup)
+  // LIVE END
   socket.on('live-end', () => {
     if (currentRoom) socket.to(currentRoom).emit('live-end', socket.id);
   });
 
-  // COMMIT STROKE (stroke is finished, store it)
+  // COMMIT STROKE
   socket.on('stroke', (s) => {
     if (!currentRoom) return;
     getRoom(currentRoom).strokes.push(s);
@@ -91,6 +95,23 @@ io.on('connection', (socket) => {
     getRoom(currentRoom).strokes = [];
     io.to(currentRoom).emit('redraw', []);
     io.to(currentRoom).emit('toast', userName + ' cleared the board 🗑️');
+  });
+
+  // IMAGE LOAD — store in room, broadcast to everyone else
+  socket.on('image-load', (dataURL) => {
+    if (!currentRoom) return;
+    getRoom(currentRoom).image = dataURL;           // persist for late joiners
+    socket.to(currentRoom).emit('image-load', dataURL);  // broadcast immediately
+    io.to(currentRoom).emit('toast', userName + ' added an image 🖼️');
+    console.log(`🖼️  ${userName} loaded an image in room "${currentRoom}"`);
+  });
+
+  // IMAGE REMOVE — clear from room, broadcast
+  socket.on('image-remove', () => {
+    if (!currentRoom) return;
+    getRoom(currentRoom).image = null;
+    socket.to(currentRoom).emit('image-remove');
+    io.to(currentRoom).emit('toast', userName + ' removed the image ✕');
   });
 
   // CURSOR
