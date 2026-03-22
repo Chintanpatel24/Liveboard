@@ -47,7 +47,52 @@ text
    │ cursors  │                    │  Room: abc12 │                │ mouse    │
    └──────────┘                    └──────────────┘                └──────────┘
 </pre>
+<pre>
+  🚀 Run It
+Bash
 
+cd liveboard
+npm start
+Output:
+
+text
+
+╔═══════════════════════════════════════════════════╗
+║          🎨  LiveBoard is RUNNING!                ║
+╠═══════════════════════════════════════════════════╣
+║  Local:   http://localhost:3000                   ║
+║  Network: http://192.168.1.42:3000                ║
+╠═══════════════════════════════════════════════════╣
+║  Open the link → Create Board → Share the URL!   ║
+╚═══════════════════════════════════════════════════╝
+🌐 Deploy Online (Free — anyone on the internet can join)
+Option A: ngrok (quickest — 1 command)
+Bash
+
+# In another terminal while server is running:
+npx ngrok http 3000
+You get a public URL like https://abc123.ngrok-free.app — share it with anyone!
+
+Option B: Render.com (permanent free hosting)
+Bash
+
+# 1. Push your liveboard folder to GitHub
+
+# 2. Go to https://render.com → New Web Service
+
+# 3. Connect your repo, set:
+#    Build Command:  npm install
+#    Start Command:  npm start
+
+# 4. Deploy → get a permanent URL like https://liveboard-xxxx.onrender.com
+Option C: Glitch.com (paste & go)
+text
+
+1. Go to https://glitch.com → New Project → Import from GitHub
+2. Paste your GitHub repo URL
+3. It auto-deploys — you get a URL instantly
+
+</pre>
 
 Features Summary
 
