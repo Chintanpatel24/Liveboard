@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>LiveBoard 🎨</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     SETUP SCREEN  (shown if Firebase not configured)
+══════════════════════════════════════ -->
+<div id="setupScreen" class="hidden">
+  <div class="setup-card">
+    <div class="setup-header">
+      <span class="setup-icon">🔥</span>
+      <h1>One-time Setup</h1>
+      <p>LiveBoard needs a free Firebase project to sync drawings in real time.<br/>This takes about 3 minutes — only needed once!</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Create a free Firebase project</strong>
+          <a href="https://console.firebase.google.com" target="_blank" class="step-link">console.firebase.google.com →</a>
+          <span class="step-hint">Sign in with Google → Add project → give it a name → Continue</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Enable Realtime Database</strong>
+          <span class="step-hint">Build → Realtime Database → Create database → Start in <em>test mode</em> → Enable</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>Get your config</strong>
+          <span class="step-hint">Project Settings (⚙️) → Your apps → Web (&lt;/&gt;) → Register app → copy the <code>firebaseConfig</code> object</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <strong>Paste it below</strong>
+          <span class="step-hint">Paste the whole config JSON (the part inside the curly braces { })</span>
+        </div>
+      </div>
+    </div>
+
+    <textarea id="configInput" placeholder='{
+  "apiKey": "AIza...",
+  "authDomain": "your-project.firebaseapp.com",
+  "databaseURL": "https://your-project-default-rtdb.firebaseio.com",
+  "projectId": "your-project",
+  "storageBucket": "your-project.appspot.com",
+  "messagingSenderId": "123456789",
+  "appId": "1:123:web:abc"
+}'></textarea>
+
+    <div id="setupError" class="setup-error hidden"></div>
+    <button id="saveConfigBtn" class="big-btn">Save & Launch →</button>
+    <p class="setup-note">Config is saved in your browser. Your friends who join your board links won't need to do this — only you (the host) needs Firebase set up on Vercel env vars for production.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     LANDING PAGE
+══════════════════════════════════════ -->
+<div id="landing" class="hidden">
+  <div class="landing-card">
+    <div class="landing-icon">🎨</div>
+    <h1>LiveBoard</h1>
+    <p>Real-time collaborative whiteboard.<br/>Draw together, live, with anyone on any device.</p>
+    <button id="createBtn" class="big-btn">✨ Create New Board</button>
+    <div class="divider">or join an existing board</div>
+    <div class="join-row">
+      <input type="text" id="joinInput" placeholder="Paste room link or code…"/>
+      <button id="joinBtn" class="big-btn secondary">Join →</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     BOARD
+══════════════════════════════════════ -->
+<div id="board" class="hidden">
+
+  <header id="topbar">
+    <div class="tb-left">
+      <span class="logo">🎨 LiveBoard</span>
+      <span class="presence-badge" id="presenceBadge">
+        <span class="presence-dot"></span>
+        <span id="onlineNum">1</span> online
+      </span>
+    </div>
+    <div class="tb-right">
+      <button id="shareBtn"    class="tb-btn accent">🔗 Share</button>
+      <button id="undoBtn"     class="tb-btn">↩ Undo</button>
+      <button id="clearBtn"    class="tb-btn danger">🗑 Clear</button>
+      <button id="downloadBtn" class="tb-btn">💾 Save</button>
+    </div>
+  </header>
+
+  <aside id="toolbar">
+    <div class="sec">
+      <div class="sec-title">TOOLS</div>
+      <div class="tool-grid">
+        <button class="tool active" data-tool="pen"    title="Pen (P)">✏️</button>
+        <button class="tool"        data-tool="eraser" title="Eraser (E)">🧹</button>
+        <button class="tool"        data-tool="text"   title="Text (T)">🔤</button>
+        <button class="tool"        data-tool="line"   title="Line (L)">╱</button>
+        <button class="tool"        data-tool="rect"   title="Rectangle (R)">▭</button>
+        <button class="tool"        data-tool="circle" title="Circle (C)">◯</button>
+        <button class="tool"        data-tool="arrow"  title="Arrow (A)">→</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">COLOR</div>
+      <div class="color-grid">
+        <button class="clr active" data-c="#1a1a1a" style="background:#1a1a1a"></button>
+        <button class="clr" data-c="#ef4444" style="background:#ef4444"></button>
+        <button class="clr" data-c="#f97316" style="background:#f97316"></button>
+        <button class="clr" data-c="#eab308" style="background:#eab308"></button>
+        <button class="clr" data-c="#22c55e" style="background:#22c55e"></button>
+        <button class="clr" data-c="#3b82f6" style="background:#3b82f6"></button>
+        <button class="clr" data-c="#8b5cf6" style="background:#8b5cf6"></button>
+        <button class="clr" data-c="#ec4899" style="background:#ec4899"></button>
+        <button class="clr" data-c="#06b6d4" style="background:#06b6d4"></button>
+        <button class="clr" data-c="#ffffff" style="background:#fff;border:2px solid #ddd"></button>
+      </div>
+      <input type="color" id="colorPick" value="#1a1a1a"/>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">SIZE · <span id="sizeVal">4</span>px</div>
+      <input type="range" id="sizeSlider" min="1" max="60" value="4"/>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">OPACITY · <span id="opVal">100</span>%</div>
+      <input type="range" id="opSlider" min="10" max="100" value="100"/>
+    </div>
+
+    <div class="sec" id="fontSec" style="display:none">
+      <div class="sec-title">FONT · <span id="fontVal">24</span>px</div>
+      <input type="range" id="fontSlider" min="12" max="96" value="24"/>
+    </div>
+
+    <div class="sec users-sec" id="usersSec"></div>
+  </aside>
+
+  <main id="canvasWrap">
+    <canvas id="mainCanvas"></canvas>
+    <canvas id="liveCanvas"></canvas>   <!-- remote live strokes -->
+    <canvas id="previewCanvas"></canvas> <!-- local shape preview -->
+    <div id="cursorLayer"></div>
+    <textarea id="textBox" class="hidden"></textarea>
+  </main>
+
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<!-- Firebase SDK (compat mode — works without build tools) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script src="app.js"></script>
+</body>
+</html>

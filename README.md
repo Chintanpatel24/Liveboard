@@ -1,101 +1,103 @@
-# 🎨 LiveBoard — Vercel Edition
+# 🎨 LiveBoard v3 — Real-time Collaborative Whiteboard
 
-Real-time collaborative whiteboard. Draw together, live, with anyone.  
-This version is rebuilt to work on **Vercel** using **Pusher Channels** for real-time sync.
-
----
-
-## Why the change?
-
-The original used Socket.IO with a Node.js server. Vercel is **serverless** — it doesn't
-keep servers running between requests, so persistent WebSocket connections don't work.
-
-This version uses **Pusher Channels**, a hosted real-time service that works perfectly
-with serverless deployments. The drawing logic is 100% identical.
+Draw together, live, with anyone — on phone, tablet, or laptop.  
+**Fully free. Works on Vercel. No server to maintain.**
 
 ---
 
-## Setup (5 minutes)
+## Why this works (and the others didn't)
 
-### Step 1 — Create a free Pusher account
+| Version | Problem |
+|---------|---------|
+| Original | Socket.IO needs a persistent server — Vercel kills it |
+| v2 (Pusher) | Client events need to be manually enabled; hard to debug |
+| **v3 (Firebase)** | ✅ Firebase manages WebSockets on their servers — works perfectly with Vercel |
 
-1. Go to **https://pusher.com** → Sign up (free)
-2. Click **"Create app"**
-3. Give it a name (e.g. `liveboard`), pick a cluster close to you (e.g. `us2` or `eu`)
-4. Go to **App Keys** — you'll see `app_id`, `key`, `secret`, `cluster`
+---
 
-### Step 2 — Enable client events
+## Setup: 4 steps, ~3 minutes
 
-In your Pusher app → **App Settings** → turn on **"Enable client events"** → Save
+### Step 1 — Create a free Firebase project
 
-> This allows users to send drawing events directly without going through a server.
+1. Go to **https://console.firebase.google.com**
+2. Sign in with Google → **Add project**
+3. Enter any project name (e.g. `liveboard`) → Continue → Create project
 
-### Step 3 — Add env vars to Vercel
+### Step 2 — Enable Realtime Database
 
-In your Vercel project:  
-**Settings → Environment Variables** → add all four:
+1. In your project, click **Build** (left sidebar) → **Realtime Database**
+2. Click **Create Database**
+3. Choose a location (any region is fine)
+4. Select **Start in test mode** → **Enable**
 
-| Name              | Value                      |
-|-------------------|---------------------------|
-| `PUSHER_APP_ID`   | (from Pusher App Keys)    |
-| `PUSHER_KEY`      | (from Pusher App Keys)    |
-| `PUSHER_SECRET`   | (from Pusher App Keys)    |
-| `PUSHER_CLUSTER`  | e.g. `us2` or `eu`        |
+### Step 3 — Get your web config
 
-### Step 4 — Deploy
+1. Click the ⚙️ **gear icon** (top left) → **Project settings**
+2. Scroll down to **Your apps** → click the **`</>`** (Web) button
+3. Register the app (any nickname) → copy the `firebaseConfig` object
 
-Push to GitHub → Vercel auto-deploys, OR run:
-
-```bash
-npx vercel --prod
+It looks like this:
+```js
+{
+  apiKey: "AIzaSy...",
+  authDomain: "your-project.firebaseapp.com",
+  databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+  projectId: "your-project",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456:web:abcdef"
+}
 ```
 
----
+### Step 4 — Deploy to Vercel
 
-## How it works
+Push this folder to GitHub, then in **Vercel**:
+- Import the repository
+- No build command, output directory = `/` (root)
+- Deploy!
 
-| Feature                  | How                                                  |
-|--------------------------|------------------------------------------------------|
-| Live drawing sync        | Pusher client events (batched every 50ms)            |
-| Cursor tracking          | Pusher client events (throttled to 10/s)             |
-| New user board sync      | Peer-to-peer: existing user sends their stroke array |
-| Shapes & text            | Committed strokes broadcast to all                   |
-| Undo / Clear             | Broadcast to all; each client updates locally        |
-| User presence            | Pusher presence channels                             |
+When you open the app for the first time, it will show a setup screen.  
+Paste your Firebase config JSON and click **Save & Launch**.  
+Config is saved in your browser automatically.
 
 ---
 
-## Pusher Free Tier limits
+## How the real-time sync works
 
-| Limit                  | Free tier        | Notes                     |
-|------------------------|------------------|---------------------------|
-| Messages / day         | 200,000          | More than enough           |
-| Concurrent connections | 100              | 100 people at once         |
-| Channels               | Unlimited        |                            |
+```
+User A draws →  points written to Firebase Realtime DB
+                    ↓ (Firebase WebSocket push, ~50ms)
+User B's browser  ← receives the update → renders instantly
+```
+
+| Data path | What it stores |
+|-----------|---------------|
+| `boards/{roomId}/strokes` | All committed strokes (permanent) |
+| `boards/{roomId}/live/{userId}` | In-progress stroke (ephemeral) |
+| `boards/{roomId}/cursors/{userId}` | Cursor position (ephemeral) |
+| `boards/{roomId}/presence/{userId}` | Who's online (auto-removed on disconnect) |
+
+---
+
+## Firebase free tier limits
+
+| Limit | Free (Spark) plan |
+|-------|------------------|
+| Simultaneous connections | 100 |
+| Storage | 1 GB |
+| Download per month | 10 GB |
+| Cost | $0 |
+
+More than enough for collaborative drawing with friends!
 
 ---
 
 ## Local development
 
+Just open `index.html` in a browser — no npm, no build step.  
+Or use any static file server:
 ```bash
-npm install
-npx vercel dev     # runs local dev server with API routes
-```
-
-Set env vars in a `.env.local` file (copy from `.env.example`).
-
----
-
-## Project structure
-
-```
-├── api/
-│   ├── config.js          ← serves Pusher public key to browser
-│   └── pusher-auth.js     ← authenticates Pusher presence channels
-├── public/
-│   ├── index.html
-│   ├── app.js             ← all drawing + Pusher logic
-│   └── style.css
-├── vercel.json
-└── package.json
+npx serve .
+# or
+python3 -m http.server 3000
 ```
