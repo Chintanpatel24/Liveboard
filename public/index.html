@@ -17,8 +17,11 @@
     <button id="createBtn" class="big-btn">✨ Create New Board</button>
     <div class="divider">or join an existing board</div>
     <div class="join-row">
-      <input type="text" id="joinInput" placeholder="Paste room code..." />
+      <input type="text" id="joinInput" placeholder="Paste room code or link..." />
       <button id="joinBtn" class="big-btn secondary">Join →</button>
+    </div>
+    <div id="configError" class="config-error hidden">
+      ⚠️ Pusher is not configured. See README for setup.
     </div>
   </div>
 </div>
@@ -97,7 +100,8 @@
 <!-- Toast -->
 <div id="toast" class="toast hidden"></div>
 
-<script src="/socket.io/socket.io.js"></script>
+<!-- Pusher SDK (replaces socket.io) -->
+<script src="https://js.pusher.com/8.4/pusher.min.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
