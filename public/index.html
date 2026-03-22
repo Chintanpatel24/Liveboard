@@ -211,8 +211,8 @@ let roomId=null, myName='', myId=socket.id;
 let strokes=[], curStroke=null;
 let tool='pen', color='#1a1a1a', sz=4, op=1, fz=24;
 let drawing=false, shapeStart=null;
-const liveMap={}, cursors={}, members={};
-let liveTimer=null, curTimer=null;
+const cursors={}, members={};
+let curTimer=null;
 
 /* ── ROUTING ── */
 $('#createBtn').addEventListener('click',()=>{
@@ -250,18 +250,17 @@ socket.on('init',d=>{
 
 socket.on('stroke',s=>{
   strokes.push(s);
-  if(s.type==='shape'||s.type==='text') renderStroke(ctx,s);
-  // paths already showed via live stream
+  renderStroke(ctx,s); // draw ALL types onto main canvas when stroke is committed
 });
 
-socket.on('live',d=>{
-  liveMap[d.uid]=d;
-  redrawLive();
+// Each segment drawn directly onto main canvas — instant, no redraw needed
+socket.on('live-seg',d=>{
+  ctx.save();ctx.beginPath();ctx.moveTo(d.x1,d.y1);ctx.lineTo(d.x2,d.y2);
+  ctx.strokeStyle=d.eraser?'#fff':d.color; ctx.lineWidth=d.eraser?d.width*3:d.width;
+  ctx.globalAlpha=d.eraser?1:d.opacity; ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.stroke();ctx.restore();
 });
-socket.on('live-end',uid=>{
-  delete liveMap[uid];
-  redrawLive();
-});
+socket.on('live-end',uid=>{}); // nothing to clean up — segments are on main canvas
 
 socket.on('redraw',arr=>{
   strokes=arr; redrawAll();
@@ -340,10 +339,7 @@ function redrawAll(){
   ctx.save();ctx.fillStyle='#fff';ctx.globalAlpha=1;ctx.fillRect(0,0,W,H);ctx.restore();
   strokes.forEach(s=>renderStroke(ctx,s));
 }
-function redrawLive(){
-  lctx.clearRect(0,0,W,H);
-  Object.values(liveMap).forEach(s=>renderStroke(lctx,s));
-}
+
 
 /* ── POINTER EVENTS ── */
 function cxy(e){
@@ -372,7 +368,6 @@ function onDown(e){
 }
 function onMove(e){
   e.preventDefault(); const p=cxy(e);
-  // Cursor throttled
   clearTimeout(curTimer);
   curTimer=setTimeout(()=>socket.emit('cursor',p),80);
   if(!drawing)return;
@@ -389,13 +384,12 @@ function onMove(e){
   ctx.strokeStyle=curStroke.eraser?'#fff':color; ctx.lineWidth=curStroke.eraser?sz*3:sz;
   ctx.globalAlpha=curStroke.eraser?1:op; ctx.lineCap='round'; ctx.lineJoin='round';
   ctx.stroke();ctx.restore();
-  // Send live to others (throttled)
-  clearTimeout(liveTimer);
-  liveTimer=setTimeout(()=>socket.emit('live',{type:'path',color,width:sz,opacity:op,eraser:curStroke.eraser,points:curStroke.points}),35);
+  // Send each segment immediately — no throttle, no data loss
+  socket.emit('live-seg',{x1:last.x,y1:last.y,x2:p.x,y2:p.y,color,width:sz,opacity:op,eraser:curStroke.eraser});
 }
 function onUp(e){
   if(!drawing)return; drawing=false;
-  clearTimeout(liveTimer); socket.emit('live-end');
+  socket.emit('live-end');
   if(shapeStart){
     pctx.clearRect(0,0,W,H); const p=cxy(e);
     const s={type:'shape',shape:tool,x1:shapeStart.x,y1:shapeStart.y,x2:p.x,y2:p.y,color,width:sz,opacity:op};

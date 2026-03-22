@@ -57,12 +57,12 @@ io.on('connection', (socket) => {
     console.log(`✅  ${userName} joined room "${roomId}"`);
   });
 
-  // LIVE STROKE (in-progress, sent every few ms while drawing)
-  socket.on('live', (data) => {
-    if (currentRoom) socket.to(currentRoom).emit('live', { ...data, uid: socket.id });
+  // LIVE SEGMENT — each tiny segment of a pen stroke, forwarded instantly
+  socket.on('live-seg', (data) => {
+    if (currentRoom) socket.to(currentRoom).emit('live-seg', data);
   });
 
-  // LIVE END (finger/mouse lifted — remove their live stroke)
+  // LIVE END — stroke finished (client handles cleanup)
   socket.on('live-end', () => {
     if (currentRoom) socket.to(currentRoom).emit('live-end', socket.id);
   });
