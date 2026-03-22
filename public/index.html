@@ -6,11 +6,11 @@
 <title>LiveBoard 🎨</title>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--top:54px;--side:208px;--accent:#3b82f6;--danger:#ef4444}
+:root{--top:54px;--side:216px;--accent:#3b82f6;--danger:#ef4444}
 html,body{height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;color:#222}
 .hidden{display:none!important}
 
-/* LANDING */
+/* ── LANDING ── */
 #landing{display:flex;align-items:center;justify-content:center;height:100%;
   background:linear-gradient(135deg,#1e3a5f,#3b82f6,#7c3aed)}
 .lcard{background:#fff;border-radius:20px;padding:50px 44px;text-align:center;
@@ -23,84 +23,125 @@ html,body{height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-seri
 .btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
 .btn.sec{background:#f1f5f9;color:#333;width:auto;padding:14px 20px}
 .btn.sec:hover{background:#e2e8f0}
-.divider{margin:22px 0;font-size:13px;color:#bbb;display:flex;align-items:center;gap:10px}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:#e5e7eb}
+.divlabel{margin:22px 0;font-size:13px;color:#bbb;display:flex;align-items:center;gap:10px}
+.divlabel::before,.divlabel::after{content:'';flex:1;height:1px;background:#e5e7eb}
 .jrow{display:flex;gap:8px}
-.jrow input{flex:1;padding:14px 15px;border:2px solid #e2e8f0;border-radius:12px;
-  font-size:15px;outline:none;transition:.2s}
+.jrow input{flex:1;padding:14px 15px;border:2px solid #e2e8f0;border-radius:12px;font-size:15px;outline:none;transition:.2s}
 .jrow input:focus{border-color:var(--accent)}
 
-/* TOP BAR */
+/* ── TOP BAR ── */
 #topbar{position:fixed;top:0;left:0;right:0;height:var(--top);background:#fff;
   box-shadow:0 2px 16px rgba(0,0,0,.08);display:flex;align-items:center;
-  justify-content:space-between;padding:0 16px;z-index:100}
-.tb-l,.tb-r{display:flex;align-items:center;gap:10px}
-.logo{font-weight:800;font-size:17px;user-select:none}
-.badge{display:flex;align-items:center;gap:6px;font-size:12px;color:#555;
-  background:#f1f5f9;padding:4px 11px;border-radius:20px}
+  justify-content:space-between;padding:0 14px;z-index:100}
+.tb-l,.tb-r{display:flex;align-items:center;gap:7px}
+.logo{font-weight:800;font-size:16px;user-select:none;white-space:nowrap}
+.badge{display:flex;align-items:center;gap:6px;font-size:11px;color:#555;
+  background:#f1f5f9;padding:3px 10px;border-radius:20px;white-space:nowrap}
 .bdot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:blink 2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.tbtn{padding:7px 13px;border:1.5px solid #ddd;border-radius:9px;background:#fff;
-  cursor:pointer;font-size:13px;transition:.15s;font-weight:500}
+.tbtn{padding:6px 11px;border:1.5px solid #ddd;border-radius:8px;background:#fff;
+  cursor:pointer;font-size:12px;transition:.15s;font-weight:500;white-space:nowrap}
 .tbtn:hover{background:#f5f5f5}
 .tbtn.ac{background:var(--accent);color:#fff;border-color:var(--accent)}
 .tbtn.ac:hover{background:#2563eb}
 .tbtn.dg{color:var(--danger);border-color:#fca5a5}
 .tbtn.dg:hover{background:#fef2f2}
+.tbtn.gr{background:#f0fdf4;color:#16a34a;border-color:#86efac}
+.tbtn.gr:hover{background:#dcfce7}
 
-/* TOOLBAR */
+/* ── SIDEBAR ── */
 #toolbar{position:fixed;top:var(--top);left:0;width:var(--side);
   height:calc(100% - var(--top));background:#fff;
-  box-shadow:2px 0 12px rgba(0,0,0,.05);padding:14px 12px;overflow-y:auto;z-index:90}
-.sec{margin-bottom:18px}
-.stitle{font-size:9.5px;text-transform:uppercase;letter-spacing:.8px;
-  color:#ccc;font-weight:700;margin-bottom:7px}
-.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
-.tool{aspect-ratio:1;border:2px solid transparent;border-radius:10px;background:#f7f7f8;
-  cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.15s}
+  box-shadow:2px 0 12px rgba(0,0,0,.05);padding:12px 10px;overflow-y:auto;z-index:90}
+.sec{margin-bottom:15px}
+.stitle{font-size:9px;text-transform:uppercase;letter-spacing:.8px;
+  color:#c8c8c8;font-weight:700;margin-bottom:6px}
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px}
+.tool{aspect-ratio:1;border:2px solid transparent;border-radius:9px;background:#f7f7f8;
+  cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:.15s}
 .tool:hover{background:#eee}
 .tool.on{border-color:var(--accent);background:#eff6ff}
-.cgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:7px}
+.cgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:6px}
 .clr{aspect-ratio:1;border:3px solid transparent;border-radius:50%;cursor:pointer;transition:.15s}
 .clr:hover,.clr.on{transform:scale(1.18)}
 .clr.on{border-color:var(--accent)}
-#colorPick{width:100%;height:28px;border:none;border-radius:7px;cursor:pointer;background:none}
+#colorPick{width:100%;height:26px;border:none;border-radius:7px;cursor:pointer;background:none}
 input[type=range]{width:100%;accent-color:var(--accent)}
-.upip{display:flex;align-items:center;gap:8px;padding:5px 4px;
-  border-radius:7px;font-size:12px;font-weight:500;color:#444;margin-bottom:3px}
-.udot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.srow{display:flex;gap:3px;margin-bottom:5px}
+.sbtn{flex:1;padding:5px 0;border:1.5px solid #e2e8f0;border-radius:7px;
+  background:#f8faff;cursor:pointer;font-size:13px;font-weight:700;transition:.15s;text-align:center}
+.sbtn:hover{background:#eee}
+.sbtn.on{border-color:var(--accent);background:#eff6ff;color:var(--accent)}
+.sbtn.ital{font-style:italic}
+.sbtn.undl{text-decoration:underline}
+#fontFam{width:100%;padding:4px 7px;border:1.5px solid #e2e8f0;border-radius:7px;
+  font-size:11px;outline:none;cursor:pointer;background:#fff;margin-top:2px;margin-bottom:4px}
+.upip{display:flex;align-items:center;gap:7px;padding:3px 3px;font-size:11px;
+  font-weight:500;color:#444;margin-bottom:2px}
+.udot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
-/* CANVAS */
-#wrap{position:fixed;top:var(--top);left:var(--side);right:0;bottom:0;overflow:hidden;
+/* ── MAIN AREA ── */
+#mainContent{position:fixed;top:var(--top);left:var(--side);right:0;bottom:0;display:flex}
+
+/* ── DRAW PANE ── */
+#drawPane{flex:1;min-width:0;position:relative;overflow:hidden;
   background-image:radial-gradient(circle,#d1d5db 1px,transparent 1px);
   background-size:24px 24px;background-color:#eef0f3}
-#mc,#lc,#pc{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
-#mc{background:#fff}
-#lc,#pc{pointer-events:none}
-#cl{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:50;overflow:hidden}
+#mc,#pc{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
+#mc{background:#fff}#pc{pointer-events:none}
+#cl{position:absolute;inset:0;pointer-events:none;z-index:50;overflow:hidden}
 .rc{position:absolute;pointer-events:none;transition:left 60ms linear,top 60ms linear}
 .rname{position:absolute;top:18px;left:4px;font-size:11px;font-weight:600;color:#fff;
   padding:2px 7px;border-radius:6px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.2)}
-#textBox{position:absolute;background:rgba(255,255,255,.92);
-  border:2px dashed var(--accent);border-radius:4px;padding:4px 10px;
-  font-family:inherit;font-size:24px;outline:none;resize:none;min-width:80px;z-index:60}
+#textBox{position:absolute;background:rgba(255,255,255,.93);border:2px dashed var(--accent);
+  border-radius:4px;padding:4px 10px;font-family:inherit;font-size:24px;outline:none;
+  resize:none;min-width:80px;z-index:60}
+#dropOverlay{position:absolute;inset:0;z-index:200;
+  background:rgba(59,130,246,.1);border:4px dashed var(--accent);
+  display:flex;align-items:center;justify-content:center;pointer-events:none}
+.drop-msg{background:#fff;border-radius:16px;padding:24px 40px;font-size:20px;
+  font-weight:700;color:var(--accent);box-shadow:0 8px 32px rgba(59,130,246,.2)}
 
-/* TOAST */
+/* ── DIVIDER ── */
+#dividerBar{width:6px;background:#e2e8f0;cursor:col-resize;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:background .15s;z-index:10}
+#dividerBar:hover,#dividerBar.dragging{background:var(--accent)}
+.divdots{color:#94a3b8;font-size:10px;line-height:1.2;user-select:none;letter-spacing:0}
+
+/* ── IMAGE PANE ── */
+#imgPane{width:420px;min-width:200px;flex-shrink:0;display:flex;flex-direction:column;background:#1e293b}
+#imgCtrl{height:46px;background:#0f172a;display:flex;align-items:center;padding:0 10px;gap:6px;flex-shrink:0}
+#imgCtrl span{color:#94a3b8;font-size:12px;font-weight:600;min-width:46px;text-align:center}
+.icbtn{padding:5px 9px;border:1px solid #334155;border-radius:7px;background:#1e293b;
+  color:#cbd5e1;cursor:pointer;font-size:13px;font-weight:600;transition:.15s}
+.icbtn:hover{background:#334155;color:#fff}
+.icbtn.rm{background:#450a0a;border-color:#7f1d1d;color:#fca5a5}
+.icbtn.rm:hover{background:#7f1d1d;color:#fff}
+#imgVp{flex:1;position:relative;overflow:hidden;cursor:grab;
+  background:repeating-conic-gradient(#2d3748 0% 25%,#1e293b 0% 50%) 0 0/20px 20px;
+  user-select:none}
+#imgVp.grabbing{cursor:grabbing}
+#imgEl{position:absolute;top:50%;left:50%;transform-origin:center center;
+  transform:translate(-50%,-50%);max-width:none;pointer-events:none;user-select:none;
+  box-shadow:0 8px 40px rgba(0,0,0,.6)}
+
+/* ── TOAST ── */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
   background:#1e293b;color:#fff;padding:10px 24px;border-radius:12px;font-size:14px;
   font-weight:500;z-index:999;box-shadow:0 6px 24px rgba(0,0,0,.3);
-  transition:opacity .3s,transform .3s}
+  transition:opacity .3s,transform .3s;white-space:nowrap}
 .toast.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(8px)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 @media(max-width:700px){
-  :root{--side:56px}
-  #toolbar{padding:8px 4px}
+  :root{--side:54px}
+  #toolbar{padding:6px 3px}
   .stitle,#colorPick,#fontSec,#userSec{display:none!important}
   .tgrid{grid-template-columns:1fr 1fr}
   .cgrid{grid-template-columns:repeat(3,1fr)}
-  .tbtn{padding:6px 8px;font-size:12px}
-  .logo{font-size:14px}
+  .tbtn{padding:5px 6px;font-size:11px}
+  .logo{font-size:13px}
+  #imgPane{width:42vw;min-width:130px}
 }
 </style>
 </head>
@@ -113,7 +154,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   <h1>LiveBoard</h1>
   <p>Real-time collaborative whiteboard.<br/>Draw together, live, from any device.</p>
   <button class="btn" id="createBtn">✨ Create New Board</button>
-  <div class="divider">or join an existing board</div>
+  <div class="divlabel">or join an existing board</div>
   <div class="jrow">
     <input type="text" id="joinInput" placeholder="Paste room link or code…"/>
     <button class="btn sec" id="joinBtn">Join →</button>
@@ -123,32 +164,50 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 
 <!-- BOARD -->
 <div id="board" class="hidden">
+
   <header id="topbar">
     <div class="tb-l">
       <span class="logo">🎨 LiveBoard</span>
       <span class="badge"><span class="bdot"></span><span id="onlineNum">1</span> online</span>
     </div>
     <div class="tb-r">
-      <button class="tbtn ac" id="shareBtn">🔗 Share Link</button>
+      <button class="tbtn ac" id="shareBtn">🔗 Share</button>
       <button class="tbtn"    id="undoBtn">↩ Undo</button>
       <button class="tbtn dg" id="clearBtn">🗑 Clear</button>
+      <button class="tbtn gr" id="imgBtn">🖼️ Image</button>
       <button class="tbtn"    id="dlBtn">💾 Save</button>
+      <input type="file" id="imgFile" accept="image/*" style="display:none"/>
     </div>
   </header>
 
   <aside id="toolbar">
+
     <div class="sec">
-      <div class="stitle">TOOLS</div>
+      <div class="stitle">DRAW</div>
       <div class="tgrid">
-        <button class="tool on" data-t="pen"    title="Pen (P)">✏️</button>
-        <button class="tool"    data-t="eraser" title="Eraser (E)">🧹</button>
-        <button class="tool"    data-t="text"   title="Text (T)">🔤</button>
-        <button class="tool"    data-t="line"   title="Line (L)">╱</button>
-        <button class="tool"    data-t="rect"   title="Rect (R)">▭</button>
-        <button class="tool"    data-t="circle" title="Circle (C)">◯</button>
-        <button class="tool"    data-t="arrow"  title="Arrow (A)">→</button>
+        <button class="tool on" data-t="pen"         title="Pen (P)">✏️</button>
+        <button class="tool"    data-t="highlighter" title="Highlighter (H)">🖊️</button>
+        <button class="tool"    data-t="fill"        title="Fill Bucket (F)">🪣</button>
+        <button class="tool"    data-t="eraser"      title="Eraser (E)">🧹</button>
+        <button class="tool"    data-t="text"        title="Text (T)">🔤</button>
       </div>
     </div>
+
+    <div class="sec">
+      <div class="stitle">SHAPES</div>
+      <div class="tgrid">
+        <button class="tool" data-t="line"          title="Line (L)">╱</button>
+        <button class="tool" data-t="rect"          title="Rectangle (R)">▭</button>
+        <button class="tool" data-t="filled-rect"   title="Filled Rectangle">▬</button>
+        <button class="tool" data-t="circle"        title="Circle (C)">◯</button>
+        <button class="tool" data-t="filled-circle" title="Filled Circle">⬤</button>
+        <button class="tool" data-t="arrow"         title="Arrow (A)">→</button>
+        <button class="tool" data-t="triangle"      title="Triangle">△</button>
+        <button class="tool" data-t="diamond"       title="Diamond">◇</button>
+        <button class="tool" data-t="star"          title="Star">☆</button>
+      </div>
+    </div>
+
     <div class="sec">
       <div class="stitle">COLOR</div>
       <div class="cgrid">
@@ -165,28 +224,72 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       </div>
       <input type="color" id="colorPick" value="#1a1a1a"/>
     </div>
+
     <div class="sec">
       <div class="stitle">SIZE · <span id="szV">4</span>px</div>
       <input type="range" id="szSlider" min="1" max="60" value="4"/>
     </div>
+
     <div class="sec">
       <div class="stitle">OPACITY · <span id="opV">100</span>%</div>
       <input type="range" id="opSlider" min="10" max="100" value="100"/>
     </div>
+
+    <!-- Text options — shown only when text tool active -->
     <div class="sec" id="fontSec" style="display:none">
-      <div class="stitle">FONT · <span id="fzV">24</span>px</div>
-      <input type="range" id="fzSlider" min="12" max="96" value="24"/>
+      <div class="stitle">TEXT SIZE · <span id="fzV">24</span>px</div>
+      <input type="range" id="fzSlider" min="10" max="120" value="24"/>
+      <div class="stitle" style="margin-top:8px">STYLE</div>
+      <div class="srow">
+        <button class="sbtn" id="boldBtn"><b>B</b></button>
+        <button class="sbtn ital" id="italicBtn"><i>I</i></button>
+        <button class="sbtn undl" id="underBtn"><u>U</u></button>
+      </div>
+      <div class="stitle">FONT</div>
+      <select id="fontFam">
+        <option value="system">Default</option>
+        <option value="serif">Serif</option>
+        <option value="mono">Monospace</option>
+        <option value="impact">Impact</option>
+        <option value="cursive">Cursive</option>
+      </select>
     </div>
+
     <div class="sec" id="userSec"><div class="stitle">WHO'S HERE</div></div>
   </aside>
 
-  <main id="wrap">
-    <canvas id="mc"></canvas>
-    <canvas id="lc"></canvas>
-    <canvas id="pc"></canvas>
-    <div id="cl"></div>
-    <textarea id="textBox" class="hidden"></textarea>
-  </main>
+  <!-- MAIN CONTENT -->
+  <div id="mainContent">
+
+    <div id="drawPane">
+      <div id="dropOverlay" class="hidden">
+        <div class="drop-msg">🖼️ Drop image to open side panel</div>
+      </div>
+      <canvas id="mc"></canvas>
+      <canvas id="pc"></canvas>
+      <div id="cl"></div>
+      <textarea id="textBox" class="hidden"></textarea>
+    </div>
+
+    <div id="dividerBar" class="hidden">
+      <span class="divdots">·<br>·<br>·<br>·<br>·</span>
+    </div>
+
+    <div id="imgPane" class="hidden">
+      <div id="imgCtrl">
+        <button class="icbtn" id="zoomOutBtn">−</button>
+        <span id="zoomLevel">100%</span>
+        <button class="icbtn" id="zoomInBtn">+</button>
+        <button class="icbtn" id="zoomFitBtn">⊡ Fit</button>
+        <div style="flex:1"></div>
+        <button class="icbtn rm" id="removeImgBtn">✕ Remove</button>
+      </div>
+      <div id="imgVp">
+        <img id="imgEl" draggable="false" alt=""/>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <div id="toast" class="toast hidden"></div>
@@ -196,178 +299,283 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 (function(){
 'use strict';
 
-const W=2400, H=1600;
+const W=2400,H=1600;
 const UCOLORS=['#3b82f6','#ef4444','#22c55e','#f97316','#8b5cf6','#06b6d4','#ec4899','#eab308','#14b8a6','#f43f5e'];
+const FONTS={
+  system:'"Segoe UI",system-ui,sans-serif',
+  serif:'Georgia,Times,serif',
+  mono:'"Courier New",Courier,monospace',
+  impact:'Impact,"Arial Black",sans-serif',
+  cursive:'"Comic Sans MS",cursive,sans-serif'
+};
+const SHAPE_TOOLS=['line','rect','filled-rect','circle','filled-circle','arrow','triangle','diamond','star'];
 
 const $=s=>document.querySelector(s);
-const landingEl=$('#landing'), boardEl=$('#board');
-const mc=$('#mc'), lc=$('#lc'), pc=$('#pc');
-const ctx=mc.getContext('2d'), lctx=lc.getContext('2d'), pctx=pc.getContext('2d');
-const cl=$('#cl'), textBox=$('#textBox'), toastEl=$('#toast'), userSec=$('#userSec');
+const landingEl=$('#landing'),boardEl=$('#board');
+const mc=$('#mc'),pc=$('#pc');
+const ctx=mc.getContext('2d'),pctx=pc.getContext('2d');
+const cl=$('#cl'),textBox=$('#textBox'),toastEl=$('#toast'),userSec=$('#userSec');
+const drawPane=$('#drawPane'),dividerBar=$('#dividerBar'),imgPane=$('#imgPane');
+const imgVp=$('#imgVp'),imgEl=$('#imgEl');
 
-const socket = io();
+const socket=io();
 
-let roomId=null, myName='', myId=socket.id;
-let strokes=[], curStroke=null;
-let tool='pen', color='#1a1a1a', sz=4, op=1, fz=24;
-let drawing=false, shapeStart=null;
-const cursors={}, members={};
+// State
+let roomId=null,myName='';
+let strokes=[],curStroke=null;
+let tool='pen',color='#1a1a1a',sz=4,op=1,fz=24;
+let txBold=false,txItalic=false,txUnder=false,txFont='system';
+let drawing=false,shapeStart=null;
+const cursors={},members={};
 let curTimer=null;
 
-/* ── ROUTING ── */
+// Image panel state
+let imgScale=1,imgTx=0,imgTy=0;
+let imgDrag=false,imgDragO=null;
+let divDrag=false;
+
+/* ─── ROUTING ─── */
 $('#createBtn').addEventListener('click',()=>{
   const id=Math.random().toString(36).substr(2,8);
   history.pushState({},'','?room='+id);
   enterBoard(id);
 });
 $('#joinBtn').addEventListener('click',()=>{
-  let v=($('#joinInput').value||'').trim(); if(!v) return;
-  let id=v; try{id=new URL(v).searchParams.get('room')||v;}catch(_){}
+  let v=($('#joinInput').value||'').trim();if(!v)return;
+  let id=v;try{id=new URL(v).searchParams.get('room')||v;}catch(_){}
   history.pushState({},'','?room='+id);
   enterBoard(id);
 });
-
 const startRoom=new URLSearchParams(location.search).get('room');
-if(startRoom) enterBoard(startRoom);
+if(startRoom)enterBoard(startRoom);
 
 function enterBoard(id){
   roomId=id;
   landingEl.classList.add('hidden');
   boardEl.classList.remove('hidden');
-  [mc,lc,pc].forEach(c=>{c.width=W;c.height=H;});
-  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+  [mc,pc].forEach(c=>{c.width=W;c.height=H;});
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
   socket.emit('join',id);
 }
 
-/* ── SOCKET EVENTS ── */
+/* ─── SOCKETS ─── */
 socket.on('init',d=>{
-  myName=d.name; myId=socket.id;
+  myName=d.name;
   strokes=d.strokes||[];
   $('#onlineNum').textContent=d.userCount;
   redrawAll();
   showToast('Welcome '+myName+'! 👋');
 });
-
-socket.on('stroke',s=>{
-  strokes.push(s);
-  renderStroke(ctx,s); // draw ALL types onto main canvas when stroke is committed
-});
-
-// Each segment drawn directly onto main canvas — instant, no redraw needed
+socket.on('stroke',s=>{strokes.push(s);renderStroke(ctx,s);});
 socket.on('live-seg',d=>{
-  ctx.save();ctx.beginPath();ctx.moveTo(d.x1,d.y1);ctx.lineTo(d.x2,d.y2);
-  ctx.strokeStyle=d.eraser?'#fff':d.color; ctx.lineWidth=d.eraser?d.width*3:d.width;
-  ctx.globalAlpha=d.eraser?1:d.opacity; ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.save();
+  ctx.beginPath();ctx.moveTo(d.x1,d.y1);ctx.lineTo(d.x2,d.y2);
+  ctx.strokeStyle=d.eraser?'#fff':d.color;
+  ctx.lineWidth=d.eraser?d.width*3:d.width;
+  ctx.globalAlpha=d.eraser?1:d.opacity;
+  ctx.lineCap=d.flat?'square':'round';
+  ctx.lineJoin=d.flat?'miter':'round';
   ctx.stroke();ctx.restore();
 });
-socket.on('live-end',uid=>{}); // nothing to clean up — segments are on main canvas
-
-socket.on('redraw',arr=>{
-  strokes=arr; redrawAll();
-});
-
+socket.on('live-end',()=>{});
+socket.on('redraw',arr=>{strokes=arr;redrawAll();});
 socket.on('user-count',n=>$('#onlineNum').textContent=n);
 socket.on('toast',msg=>showToast(msg));
-
 socket.on('cursor',d=>{
   let el=cursors[d.id];
   if(!el){
-    el=document.createElement('div'); el.className='rc';
+    el=document.createElement('div');el.className='rc';
     const clr=UCOLORS[Object.keys(cursors).length%UCOLORS.length];
-    el.innerHTML=`<svg width="14" height="20" viewBox="0 0 14 20" fill="${clr}" xmlns="http://www.w3.org/2000/svg"><path d="M0 0 L0 16 L4 11.5 L6.5 18 L8.5 17 L6 10.5 L11 10.5 Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="rname" style="background:${clr}">${d.name}</div>`;
-    cl.appendChild(el); cursors[d.id]=el;
-    members[d.id]={name:d.name,color:clr};
-    renderPresence();
+    el.innerHTML=`<svg width="14" height="20" viewBox="0 0 14 20" fill="${clr}"><path d="M0 0 L0 16 L4 11.5 L6.5 18 L8.5 17 L6 10.5 L11 10.5 Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="rname" style="background:${clr}">${d.name}</div>`;
+    cl.appendChild(el);cursors[d.id]=el;
+    members[d.id]={name:d.name,color:clr};renderPresence();
   }
   const r=mc.getBoundingClientRect();
-  el.style.left=(d.x*r.width/W)+'px'; el.style.top=(d.y*r.height/H)+'px';
+  el.style.left=(d.x*r.width/W)+'px';el.style.top=(d.y*r.height/H)+'px';
 });
 socket.on('cursor-gone',id=>{
   if(cursors[id]){cursors[id].remove();delete cursors[id];}
-  delete members[id]; renderPresence();
+  delete members[id];renderPresence();
 });
 
-/* ── DRAW HELPERS ── */
+/* ─── DRAW HELPERS ─── */
 function drawPath(c,s){
-  const p=s.points; if(!p||!p.length) return;
+  const p=s.points;if(!p||!p.length)return;
   if(p.length===1){
     c.save();c.beginPath();
     c.arc(p[0].x,p[0].y,s.eraser?s.width*1.5:s.width/2,0,Math.PI*2);
-    c.fillStyle=s.eraser?'#fff':s.color; c.globalAlpha=s.eraser?1:s.opacity;
+    c.fillStyle=s.eraser?'#fff':s.color;c.globalAlpha=s.eraser?1:s.opacity;
     c.fill();c.restore();return;
   }
   c.save();
-  c.strokeStyle=s.eraser?'#fff':s.color; c.lineWidth=s.eraser?s.width*3:s.width;
-  c.globalAlpha=s.eraser?1:s.opacity; c.lineCap='round'; c.lineJoin='round';
-  c.beginPath(); c.moveTo(p[0].x,p[0].y);
-  for(let i=1;i<p.length-1;i++){
-    const mx=(p[i].x+p[i+1].x)/2,my=(p[i].y+p[i+1].y)/2;
-    c.quadraticCurveTo(p[i].x,p[i].y,mx,my);
+  c.strokeStyle=s.eraser?'#fff':s.color;
+  c.lineWidth=s.eraser?s.width*3:s.width;
+  c.globalAlpha=s.eraser?1:s.opacity;
+  c.lineCap=s.flat?'square':'round';
+  c.lineJoin=s.flat?'miter':'round';
+  c.beginPath();c.moveTo(p[0].x,p[0].y);
+  if(s.flat){
+    for(let i=1;i<p.length;i++)c.lineTo(p[i].x,p[i].y);
+  }else{
+    for(let i=1;i<p.length-1;i++){
+      const mx=(p[i].x+p[i+1].x)/2,my=(p[i].y+p[i+1].y)/2;
+      c.quadraticCurveTo(p[i].x,p[i].y,mx,my);
+    }
+    c.lineTo(p[p.length-1].x,p[p.length-1].y);
   }
-  c.lineTo(p[p.length-1].x,p[p.length-1].y); c.stroke(); c.restore();
+  c.stroke();c.restore();
 }
+
 function drawShape(c,s){
   const{x1,y1,x2,y2,color:col,width:w,opacity:a}=s;
-  c.save(); c.strokeStyle=col; c.lineWidth=w; c.globalAlpha=a; c.lineCap='round';
+  c.save();c.strokeStyle=col;c.fillStyle=col;c.lineWidth=w;c.globalAlpha=a;c.lineCap='round';
   switch(s.shape){
-    case'line':c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();break;
-    case'rect':c.strokeRect(Math.min(x1,x2),Math.min(y1,y2),Math.abs(x2-x1),Math.abs(y2-y1));break;
-    case'circle':{const rx=Math.abs(x2-x1)/2,ry=Math.abs(y2-y1)/2;
-      c.beginPath();c.ellipse(Math.min(x1,x2)+rx,Math.min(y1,y2)+ry,rx||1,ry||1,0,0,Math.PI*2);c.stroke();break;}
-    case'arrow':{c.fillStyle=col;c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();
-      const a2=Math.atan2(y2-y1,x2-x1),h=Math.max(14,w*4);
+    case'line':
+      c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();break;
+    case'rect':
+      c.strokeRect(Math.min(x1,x2),Math.min(y1,y2),Math.abs(x2-x1),Math.abs(y2-y1));break;
+    case'filled-rect':
+      c.fillRect(Math.min(x1,x2),Math.min(y1,y2),Math.abs(x2-x1),Math.abs(y2-y1));break;
+    case'circle':{
+      const rx=Math.abs(x2-x1)/2,ry=Math.abs(y2-y1)/2;
+      c.beginPath();c.ellipse(Math.min(x1,x2)+rx,Math.min(y1,y2)+ry,rx||1,ry||1,0,0,Math.PI*2);
+      c.stroke();break;}
+    case'filled-circle':{
+      const rx=Math.abs(x2-x1)/2,ry=Math.abs(y2-y1)/2;
+      c.beginPath();c.ellipse(Math.min(x1,x2)+rx,Math.min(y1,y2)+ry,rx||1,ry||1,0,0,Math.PI*2);
+      c.fill();break;}
+    case'arrow':{
+      c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();
+      const ang=Math.atan2(y2-y1,x2-x1),h=Math.max(16,w*5);
       c.beginPath();c.moveTo(x2,y2);
-      c.lineTo(x2-h*Math.cos(a2-Math.PI/6),y2-h*Math.sin(a2-Math.PI/6));
-      c.lineTo(x2-h*Math.cos(a2+Math.PI/6),y2-h*Math.sin(a2+Math.PI/6));
+      c.lineTo(x2-h*Math.cos(ang-Math.PI/6),y2-h*Math.sin(ang-Math.PI/6));
+      c.lineTo(x2-h*Math.cos(ang+Math.PI/6),y2-h*Math.sin(ang+Math.PI/6));
       c.closePath();c.fill();break;}
+    case'triangle':{
+      const mx=(x1+x2)/2;
+      c.beginPath();c.moveTo(mx,y1);c.lineTo(x2,y2);c.lineTo(x1,y2);c.closePath();
+      c.stroke();break;}
+    case'diamond':{
+      const mx=(x1+x2)/2,my=(y1+y2)/2;
+      c.beginPath();c.moveTo(mx,y1);c.lineTo(x2,my);c.lineTo(mx,y2);c.lineTo(x1,my);
+      c.closePath();c.stroke();break;}
+    case'star':{
+      const cx=(x1+x2)/2,cy=(y1+y2)/2;
+      const rx=Math.abs(x2-x1)/2||1,ry=Math.abs(y2-y1)/2||1;
+      c.beginPath();
+      for(let i=0;i<10;i++){
+        const ang2=(i*Math.PI/5)-Math.PI/2;
+        const r2=i%2===0?1:0.4;
+        i===0?c.moveTo(cx+rx*r2*Math.cos(ang2),cy+ry*r2*Math.sin(ang2))
+             :c.lineTo(cx+rx*r2*Math.cos(ang2),cy+ry*r2*Math.sin(ang2));
+      }
+      c.closePath();c.stroke();break;}
   }
   c.restore();
 }
+
 function drawText(c,s){
-  c.save(); c.font=s.size+'px "Segoe UI",system-ui,sans-serif';
-  c.fillStyle=s.color; c.globalAlpha=s.opacity;
-  (s.text||'').split('\n').forEach((l,i)=>c.fillText(l,s.x,s.y+i*s.size*1.25));
+  c.save();
+  const fam=FONTS[s.font]||FONTS.system;
+  const st=(s.italic?'italic ':'')+( s.bold?'bold ':'');
+  c.font=`${st}${s.size}px ${fam}`;
+  c.fillStyle=s.color;c.globalAlpha=s.opacity;
+  (s.text||'').split('\n').forEach((l,i)=>{
+    const ly=s.y+i*s.size*1.3;
+    c.fillText(l,s.x,ly);
+    if(s.under){
+      const tw=c.measureText(l).width;
+      c.save();c.strokeStyle=s.color;c.lineWidth=Math.max(1,s.size/16);
+      c.globalAlpha=s.opacity;
+      c.beginPath();c.moveTo(s.x,ly+s.size*.12);c.lineTo(s.x+tw,ly+s.size*.12);c.stroke();
+      c.restore();
+    }
+  });
   c.restore();
 }
+
 function renderStroke(c,s){
   if(!s)return;
-  if(s.type==='path') drawPath(c,s);
+  if(s.type==='path')  drawPath(c,s);
   if(s.type==='shape') drawShape(c,s);
-  if(s.type==='text') drawText(c,s);
+  if(s.type==='text')  drawText(c,s);
+  if(s.type==='fill'&&c===ctx) floodFill(s.x,s.y,s.color);
 }
+
 function redrawAll(){
   ctx.save();ctx.fillStyle='#fff';ctx.globalAlpha=1;ctx.fillRect(0,0,W,H);ctx.restore();
   strokes.forEach(s=>renderStroke(ctx,s));
 }
 
+/* ─── FLOOD FILL ─── */
+function hexToRgb(hex){
+  let h=hex.replace('#','');
+  if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+  return{r:parseInt(h.slice(0,2),16),g:parseInt(h.slice(2,4),16),b:parseInt(h.slice(4,6),16)};
+}
+function floodFill(sx,sy,fillHex){
+  sx=Math.round(sx);sy=Math.round(sy);
+  if(sx<0||sx>=W||sy<0||sy>=H)return;
+  const img=ctx.getImageData(0,0,W,H);
+  const d=img.data,fc=hexToRgb(fillHex);
+  const ti=(sy*W+sx)*4;
+  const tr=d[ti],tg=d[ti+1],tb=d[ti+2],ta=d[ti+3];
+  if(tr===fc.r&&tg===fc.g&&tb===fc.b&&ta===255)return;
+  const visited=new Uint8Array(W*H);
+  const stack=[[sx,sy]];
+  while(stack.length){
+    const[x,y]=stack.pop();
+    if(x<0||x>=W||y<0||y>=H)continue;
+    const vi=y*W+x;if(visited[vi])continue;
+    const i=vi*4;
+    if(d[i]!==tr||d[i+1]!==tg||d[i+2]!==tb||d[i+3]!==ta)continue;
+    let l=x,r=x;
+    while(l>0){const j=(y*W+l-1)*4;if(!visited[y*W+l-1]&&d[j]===tr&&d[j+1]===tg&&d[j+2]===tb&&d[j+3]===ta)l--;else break;}
+    while(r<W-1){const j=(y*W+r+1)*4;if(!visited[y*W+r+1]&&d[j]===tr&&d[j+1]===tg&&d[j+2]===tb&&d[j+3]===ta)r++;else break;}
+    for(let cx=l;cx<=r;cx++){
+      const ci=(y*W+cx)*4;
+      d[ci]=fc.r;d[ci+1]=fc.g;d[ci+2]=fc.b;d[ci+3]=255;
+      visited[y*W+cx]=1;
+    }
+    for(let cx=l;cx<=r;cx++){
+      if(y>0&&!visited[(y-1)*W+cx])stack.push([cx,y-1]);
+      if(y<H-1&&!visited[(y+1)*W+cx])stack.push([cx,y+1]);
+    }
+  }
+  ctx.putImageData(img,0,0);
+}
 
-/* ── POINTER EVENTS ── */
+/* ─── POINTER EVENTS ─── */
 function cxy(e){
-  const r=mc.getBoundingClientRect(); let cx,cy;
+  const r=mc.getBoundingClientRect();let cx,cy;
   if(e.touches&&e.touches.length){cx=e.touches[0].clientX;cy=e.touches[0].clientY;}
   else if(e.changedTouches&&e.changedTouches.length){cx=e.changedTouches[0].clientX;cy=e.changedTouches[0].clientY;}
   else{cx=e.clientX;cy=e.clientY;}
   return{x:(cx-r.left)*(W/r.width),y:(cy-r.top)*(H/r.height)};
 }
-
-mc.addEventListener('mousedown',onDown);
-mc.addEventListener('mousemove',onMove);
-mc.addEventListener('mouseup',onUp);
-mc.addEventListener('mouseleave',onUp);
-mc.addEventListener('touchstart',onDown,{passive:false});
-mc.addEventListener('touchmove',onMove,{passive:false});
-mc.addEventListener('touchend',onUp);
-mc.addEventListener('touchcancel',onUp);
+mc.addEventListener('mousedown',onDown);mc.addEventListener('mousemove',onMove);
+mc.addEventListener('mouseup',onUp);mc.addEventListener('mouseleave',onUp);
+mc.addEventListener('touchstart',onDown,{passive:false});mc.addEventListener('touchmove',onMove,{passive:false});
+mc.addEventListener('touchend',onUp);mc.addEventListener('touchcancel',onUp);
 
 function onDown(e){
-  e.preventDefault(); const p=cxy(e);
+  e.preventDefault();const p=cxy(e);
   if(tool==='text'){openText(p.x,p.y);return;}
+  if(tool==='fill'){
+    floodFill(p.x,p.y,color);
+    const s={type:'fill',x:Math.round(p.x),y:Math.round(p.y),color};
+    strokes.push(s);socket.emit('stroke',s);return;
+  }
   drawing=true;
-  if(['line','rect','circle','arrow'].includes(tool)){shapeStart=p;return;}
-  curStroke={type:'path',color,width:sz,opacity:op,eraser:tool==='eraser',points:[p]};
+  if(SHAPE_TOOLS.includes(tool)){shapeStart=p;return;}
+  const hl=(tool==='highlighter');
+  curStroke={type:'path',color,
+    width:hl?Math.max(sz*4,16):sz,
+    opacity:hl?0.35:op,
+    eraser:tool==='eraser',flat:hl,points:[p]};
 }
 function onMove(e){
-  e.preventDefault(); const p=cxy(e);
+  e.preventDefault();const p=cxy(e);
   clearTimeout(curTimer);
   curTimer=setTimeout(()=>socket.emit('cursor',p),80);
   if(!drawing)return;
@@ -379,40 +587,46 @@ function onMove(e){
   if(!curStroke)return;
   const last=curStroke.points[curStroke.points.length-1];
   curStroke.points.push(p);
-  // Draw locally immediately
   ctx.save();ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);
-  ctx.strokeStyle=curStroke.eraser?'#fff':color; ctx.lineWidth=curStroke.eraser?sz*3:sz;
-  ctx.globalAlpha=curStroke.eraser?1:op; ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.strokeStyle=curStroke.eraser?'#fff':curStroke.color;
+  ctx.lineWidth=curStroke.eraser?curStroke.width*3:curStroke.width;
+  ctx.globalAlpha=curStroke.eraser?1:curStroke.opacity;
+  ctx.lineCap=curStroke.flat?'square':'round';
+  ctx.lineJoin=curStroke.flat?'miter':'round';
   ctx.stroke();ctx.restore();
-  // Send each segment immediately — no throttle, no data loss
-  socket.emit('live-seg',{x1:last.x,y1:last.y,x2:p.x,y2:p.y,color,width:sz,opacity:op,eraser:curStroke.eraser});
+  socket.emit('live-seg',{x1:last.x,y1:last.y,x2:p.x,y2:p.y,
+    color:curStroke.color,width:curStroke.width,opacity:curStroke.opacity,
+    eraser:curStroke.eraser,flat:curStroke.flat});
 }
 function onUp(e){
-  if(!drawing)return; drawing=false;
-  socket.emit('live-end');
+  if(!drawing)return;drawing=false;socket.emit('live-end');
   if(shapeStart){
-    pctx.clearRect(0,0,W,H); const p=cxy(e);
-    const s={type:'shape',shape:tool,x1:shapeStart.x,y1:shapeStart.y,x2:p.x,y2:p.y,color,width:sz,opacity:op};
-    drawShape(ctx,s); strokes.push(s); socket.emit('stroke',s); shapeStart=null; return;
+    pctx.clearRect(0,0,W,H);const p=cxy(e);
+    const s={type:'shape',shape:tool,x1:shapeStart.x,y1:shapeStart.y,
+      x2:p.x,y2:p.y,color,width:sz,opacity:op};
+    drawShape(ctx,s);strokes.push(s);socket.emit('stroke',s);shapeStart=null;return;
   }
-  if(curStroke&&curStroke.points.length){
-    strokes.push(curStroke); socket.emit('stroke',curStroke); curStroke=null;
-  }
+  if(curStroke&&curStroke.points.length){strokes.push(curStroke);socket.emit('stroke',curStroke);curStroke=null;}
 }
 
-/* ── TEXT ── */
+/* ─── TEXT ─── */
 function openText(cx,cy){
-  const r=mc.getBoundingClientRect(),sx=r.width/W,sy=r.height/H;
+  const r=mc.getBoundingClientRect(),sc=r.width/W;
   textBox.classList.remove('hidden');
-  textBox.style.left=(cx*sx)+'px'; textBox.style.top=(cy*sy)+'px';
-  textBox.style.fontSize=(fz*sx)+'px'; textBox.style.color=color;
-  textBox.value=''; textBox._cx=cx; textBox._cy=cy;
+  textBox.style.left=(cx*sc)+'px';textBox.style.top=(cy*sc)+'px';
+  textBox.style.fontSize=(fz*sc)+'px';textBox.style.color=color;
+  textBox.style.fontFamily=FONTS[txFont]||FONTS.system;
+  textBox.style.fontWeight=txBold?'bold':'normal';
+  textBox.style.fontStyle=txItalic?'italic':'normal';
+  textBox.style.textDecoration=txUnder?'underline':'none';
+  textBox.value='';textBox._cx=cx;textBox._cy=cy;
   setTimeout(()=>textBox.focus(),20);
 }
 function commitText(){
-  const t=(textBox.value||'').trim(); textBox.classList.add('hidden'); if(!t)return;
-  const s={type:'text',text:t,x:textBox._cx,y:textBox._cy+fz,color,size:fz,opacity:op};
-  drawText(ctx,s); strokes.push(s); socket.emit('stroke',s);
+  const t=(textBox.value||'').trim();textBox.classList.add('hidden');if(!t)return;
+  const s={type:'text',text:t,x:textBox._cx,y:textBox._cy+fz,color,size:fz,opacity:op,
+    bold:txBold,italic:txItalic,under:txUnder,font:txFont};
+  drawText(ctx,s);strokes.push(s);socket.emit('stroke',s);
 }
 textBox.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();commitText();}
@@ -420,7 +634,102 @@ textBox.addEventListener('keydown',e=>{
 });
 textBox.addEventListener('blur',commitText);
 
-/* ── PRESENCE ── */
+/* ─── IMAGE PANEL ─── */
+$('#imgBtn').addEventListener('click',()=>$('#imgFile').click());
+$('#imgFile').addEventListener('change',e=>{
+  const f=e.target.files[0];if(f)loadImg(f);e.target.value='';
+});
+
+// Drag & drop
+document.addEventListener('dragenter',e=>{
+  if(!boardEl.classList.contains('hidden')&&[...e.dataTransfer.types].includes('Files'))
+    $('#dropOverlay').classList.remove('hidden');
+});
+document.addEventListener('dragleave',e=>{
+  if(!e.relatedTarget||!document.contains(e.relatedTarget))
+    $('#dropOverlay').classList.add('hidden');
+});
+document.addEventListener('dragover',e=>e.preventDefault());
+document.addEventListener('drop',e=>{
+  e.preventDefault();$('#dropOverlay').classList.add('hidden');
+  const f=e.dataTransfer.files[0];
+  if(f&&f.type.startsWith('image/'))loadImg(f);
+});
+
+function loadImg(file){
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    imgEl.onload=()=>{
+      imgPane.classList.remove('hidden');
+      dividerBar.classList.remove('hidden');
+      // reset draw pane flex in case user resized previously
+      drawPane.style.flex='1';drawPane.style.width='';
+      imgPane.style.width='420px';
+      fitImg();
+      showToast('Image loaded! Scroll to zoom · Drag to pan 🖼️');
+    };
+    imgEl.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function fitImg(){
+  const vw=imgVp.clientWidth||400,vh=imgVp.clientHeight||400;
+  const iw=imgEl.naturalWidth||800,ih=imgEl.naturalHeight||600;
+  imgScale=Math.min(vw/iw,vh/ih,1);
+  imgTx=0;imgTy=0;updateImg();
+}
+function updateImg(){
+  imgEl.style.transform=`translate(calc(-50% + ${imgTx}px),calc(-50% + ${imgTy}px)) scale(${imgScale})`;
+  $('#zoomLevel').textContent=Math.round(imgScale*100)+'%';
+}
+
+$('#zoomInBtn').addEventListener('click',()=>{imgScale=Math.min(10,imgScale*1.2);updateImg();});
+$('#zoomOutBtn').addEventListener('click',()=>{imgScale=Math.max(0.05,imgScale/1.2);updateImg();});
+$('#zoomFitBtn').addEventListener('click',fitImg);
+
+imgVp.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const rect=imgVp.getBoundingClientRect();
+  const mx=e.clientX-rect.left-rect.width/2;
+  const my=e.clientY-rect.top-rect.height/2;
+  const f=e.deltaY<0?1.12:0.88;
+  const ns=Math.max(0.05,Math.min(10,imgScale*f));
+  imgTx=mx+(imgTx-mx)*(ns/imgScale);
+  imgTy=my+(imgTy-my)*(ns/imgScale);
+  imgScale=ns;updateImg();
+},{passive:false});
+
+imgVp.addEventListener('mousedown',e=>{imgDrag=true;imgDragO={x:e.clientX-imgTx,y:e.clientY-imgTy};imgVp.classList.add('grabbing');});
+imgVp.addEventListener('touchstart',e=>{
+  if(e.touches.length===1){imgDrag=true;imgDragO={x:e.touches[0].clientX-imgTx,y:e.touches[0].clientY-imgTy};}
+},{passive:true});
+window.addEventListener('mousemove',e=>{if(!imgDrag)return;imgTx=e.clientX-imgDragO.x;imgTy=e.clientY-imgDragO.y;updateImg();});
+window.addEventListener('touchmove',e=>{if(!imgDrag||e.touches.length!==1)return;imgTx=e.touches[0].clientX-imgDragO.x;imgTy=e.touches[0].clientY-imgDragO.y;updateImg();},{passive:true});
+window.addEventListener('mouseup',()=>{imgDrag=false;imgVp.classList.remove('grabbing');});
+window.addEventListener('touchend',()=>{imgDrag=false;});
+
+$('#removeImgBtn').addEventListener('click',()=>{
+  imgPane.classList.add('hidden');dividerBar.classList.add('hidden');
+  imgEl.src='';drawPane.style.flex='1';drawPane.style.width='';
+  showToast('Image removed — full canvas restored.');
+});
+
+/* ─── DIVIDER RESIZE ─── */
+dividerBar.addEventListener('mousedown',e=>{divDrag=true;dividerBar.classList.add('dragging');e.preventDefault();});
+window.addEventListener('mousemove',e=>{
+  if(!divDrag)return;
+  const mc2=$('#mainContent');
+  const rect=mc2.getBoundingClientRect();
+  const dw=e.clientX-rect.left;
+  const iw=rect.width-dw-6;
+  if(dw>200&&iw>180){
+    drawPane.style.flex='none';drawPane.style.width=dw+'px';
+    imgPane.style.width=iw+'px';
+  }
+});
+window.addEventListener('mouseup',()=>{if(divDrag){divDrag=false;dividerBar.classList.remove('dragging');}});
+
+/* ─── PRESENCE ─── */
 function renderPresence(){
   userSec.innerHTML='<div class="stitle">WHO\'S HERE</div>';
   for(const[id,m]of Object.entries(members)){
@@ -430,53 +739,62 @@ function renderPresence(){
   }
 }
 
-/* ── TOOLBAR ── */
-document.querySelectorAll('.tool').forEach(b=>b.addEventListener('click',()=>{
+/* ─── TOOLBAR ─── */
+function setTool(t){
   document.querySelector('.tool.on')?.classList.remove('on');
-  b.classList.add('on'); tool=b.dataset.t;
-  mc.style.cursor=tool==='eraser'?'cell':tool==='text'?'text':'crosshair';
-  $('#fontSec').style.display=tool==='text'?'':'none';
-}));
+  document.querySelector(`.tool[data-t="${t}"]`)?.classList.add('on');
+  tool=t;
+  mc.style.cursor=(t==='eraser')?'cell':(t==='text')?'text':'crosshair';
+  $('#fontSec').style.display=(t==='text')?'block':'none';
+}
+document.querySelectorAll('.tool').forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.t)));
+
 document.querySelectorAll('.clr').forEach(b=>b.addEventListener('click',()=>{
   document.querySelector('.clr.on')?.classList.remove('on');
-  b.classList.add('on'); color=b.dataset.c; $('#colorPick').value=color;
+  b.classList.add('on');color=b.dataset.c;$('#colorPick').value=color;
 }));
 $('#colorPick').addEventListener('input',e=>{color=e.target.value;document.querySelector('.clr.on')?.classList.remove('on');});
 $('#szSlider').addEventListener('input',e=>{sz=+e.target.value;$('#szV').textContent=sz;});
 $('#opSlider').addEventListener('input',e=>{op=+e.target.value/100;$('#opV').textContent=e.target.value;});
 $('#fzSlider').addEventListener('input',e=>{fz=+e.target.value;$('#fzV').textContent=fz;});
+$('#boldBtn').addEventListener('click',()=>{txBold=!txBold;$('#boldBtn').classList.toggle('on',txBold);});
+$('#italicBtn').addEventListener('click',()=>{txItalic=!txItalic;$('#italicBtn').classList.toggle('on',txItalic);});
+$('#underBtn').addEventListener('click',()=>{txUnder=!txUnder;$('#underBtn').classList.toggle('on',txUnder);});
+$('#fontFam').addEventListener('change',e=>txFont=e.target.value);
 
 $('#shareBtn').addEventListener('click',()=>{
   const u=location.href;
-  if(navigator.clipboard){navigator.clipboard.writeText(u).then(()=>showToast('Link copied! 🔗'));}
+  if(navigator.clipboard)navigator.clipboard.writeText(u).then(()=>showToast('Link copied! 🔗'));
   else prompt('Copy this link:',u);
 });
 $('#undoBtn').addEventListener('click',()=>socket.emit('undo'));
 $('#clearBtn').addEventListener('click',()=>{if(confirm('Clear the board for everyone?'))socket.emit('clear');});
 $('#dlBtn').addEventListener('click',()=>{
   const a=document.createElement('a');
-  a.download='liveboard-'+Date.now()+'.png'; a.href=mc.toDataURL(); a.click();
+  a.download='liveboard-'+Date.now()+'.png';a.href=mc.toDataURL();a.click();
   showToast('Saved! 💾');
 });
+
 document.addEventListener('keydown',e=>{
   if(e.target===textBox)return;
   if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();socket.emit('undo');return;}
-  const m={p:'pen',e:'eraser',t:'text',l:'line',r:'rect',c:'circle',a:'arrow'};
-  if(m[e.key]&&!e.ctrlKey&&!e.metaKey){
-    document.querySelector('.tool.on')?.classList.remove('on');
-    document.querySelector(`.tool[data-t="${m[e.key]}"]`)?.classList.add('on');
-    tool=m[e.key];
-    mc.style.cursor=tool==='eraser'?'cell':tool==='text'?'text':'crosshair';
-    $('#fontSec').style.display=tool==='text'?'':'none';
-  }
+  if((e.ctrlKey||e.metaKey)&&e.key==='b'&&tool==='text'){e.preventDefault();$('#boldBtn').click();return;}
+  if((e.ctrlKey||e.metaKey)&&e.key==='i'&&tool==='text'){e.preventDefault();$('#italicBtn').click();return;}
+  if((e.ctrlKey||e.metaKey)&&e.key==='u'&&tool==='text'){e.preventDefault();$('#underBtn').click();return;}
+  if(e.ctrlKey||e.metaKey)return;
+  const map={p:'pen',h:'highlighter',f:'fill',e:'eraser',t:'text',
+    l:'line',r:'rect',c:'circle',a:'arrow'};
+  if(map[e.key])setTool(map[e.key]);
 });
 
 function showToast(msg,ms=2800){
   toastEl.textContent=msg;
   toastEl.classList.remove('hidden');toastEl.classList.add('show');
   clearTimeout(toastEl._t);
-  toastEl._t=setTimeout(()=>{toastEl.classList.remove('show');
-    setTimeout(()=>toastEl.classList.add('hidden'),300);},ms);
+  toastEl._t=setTimeout(()=>{
+    toastEl.classList.remove('show');
+    setTimeout(()=>toastEl.classList.add('hidden'),300);
+  },ms);
 }
 })();
 </script>

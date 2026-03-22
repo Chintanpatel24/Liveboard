@@ -1,26 +1,71 @@
 # 🎨 LiveBoard — Local Collaborative Whiteboard
 
-Draw together in real time with anyone — run it on your own PC, share the link, and you're live. No cloud accounts, no Vercel, no Firebase. Just Node.js.
+Draw together in real time with anyone. Run it on your PC, share the link, and you're both live. No cloud, no accounts, no Vercel. Just Node.js.
 
 ---
 
-## What it does
+## What's inside
 
-- **Live drawing sync** — every stroke appears on everyone's screen as you draw it, not just after you lift the pen
-- **Live cursors** — see where your friends' cursors are moving in real time
-- **Multiple tools** — pen, eraser, text, line, rectangle, circle, arrow
-- **Color picker + opacity + brush size**
-- **Undo / Clear** — synced for everyone in the room
-- **Download** — save the board as a PNG
-- **Rooms** — create a board and share the link; each link is its own private room
-- **Works on phone + desktop** — full touch support
+### 🖊️ Drawing Tools
+| Tool | Key | Description |
+|------|-----|-------------|
+| Pen | `P` | Smooth freehand drawing |
+| Highlighter | `H` | Semi-transparent wide strokes |
+| Fill Bucket | `F` | Flood-fill any area with color |
+| Eraser | `E` | Erase parts of the drawing |
+| Text | `T` | Click to place text anywhere |
+
+### 🔷 Shapes
+| Shape | Key | Description |
+|-------|-----|-------------|
+| Line | `L` | Straight line |
+| Rectangle | `R` | Outlined rectangle |
+| Filled Rectangle | — | Solid filled rectangle |
+| Circle | `C` | Outlined ellipse/circle |
+| Filled Circle | — | Solid filled circle |
+| Arrow | `A` | Line with arrowhead |
+| Triangle | — | Outlined triangle |
+| Diamond | — | Outlined diamond |
+| Star | — | 5-point star |
+
+### ✍️ Text Options
+- **Font size** slider (10–120px)
+- **Bold**, *Italic*, Underline toggles
+- **Font family** — Default / Serif / Monospace / Impact / Cursive
+- `Ctrl+B` bold · `Ctrl+I` italic · `Ctrl+U` underline (while text tool active)
+
+### 🎨 Colour & Style
+- 10 preset colours + custom colour picker
+- **Brush size** slider (1–60px)
+- **Opacity** slider (10–100%)
+
+### 🖼️ Image Panel
+- Click **🖼️ Image** button in the top bar — or **drag & drop** any image file onto the board
+- The window **splits**: drawing canvas on the left, image viewer on the right
+- **Zoom** in/out with scroll wheel or +/− buttons
+- **Pan** by clicking and dragging inside the image panel
+- **Fit** button to reset zoom/pan to fit the panel
+- Drag the **vertical divider bar** to resize the two panels
+- Click **✕ Remove** to dismiss the image — drawing canvas expands back to full width
+
+### 👥 Collaboration
+- **Live pen strokes** — others see your drawing segment by segment as you draw
+- **Live cursors** — see everyone's cursor moving in real time with their name
+- **Presence list** — sidebar shows who's currently in the room
+- **Undo** — synced for everyone (`↩ Undo` button or `Ctrl+Z`)
+- **Clear** — wipes the board for everyone
+
+### Other
+- **💾 Save** — download the board as a PNG
+- **🔗 Share** — copies the current room URL to clipboard
+- Full **touch support** (phones + tablets)
+- Responsive layout — sidebar collapses on mobile
 
 ---
 
 ## Requirements
 
-- [Node.js](https://nodejs.org) (download the **LTS** version — free)
-- That's it
+- [Node.js](https://nodejs.org) — download the **LTS** version (free, one-time install)
 
 ---
 
@@ -30,7 +75,7 @@ Draw together in real time with anyone — run it on your own PC, share the link
 
 Double-click **`START.bat`**
 
-That's it. It installs packages on first run, then starts the server.
+First run downloads packages (~10 seconds), then the server starts.
 
 ### Mac / Linux
 
@@ -49,63 +94,85 @@ node server.js
 
 ## Sharing with your friend
 
-When the server starts, your terminal shows:
+When the server starts, the terminal shows your link:
 
 ```
 ╔══════════════════════════════════════════════════════╗
 ║           🎨  LiveBoard is running!                  ║
 ╠══════════════════════════════════════════════════════╣
 ║  Your link:  http://192.168.1.5:3000
-║                                                      ║
-║  1. Share that link with your friend                 ║
-║  2. You both open it → draw together live!           ║
 ╚══════════════════════════════════════════════════════╝
 ```
 
 ### Friend is on the same WiFi
 
-Send them the `http://192.168.x.x:3000` link directly. They open it in their browser and join.
+Send them the `http://192.168.x.x:3000` link. They open it in their browser — done.
 
 ### Friend is on a different network (anywhere in the world)
 
-Run this in a **new terminal window** (Node.js not required for this):
+Open a **new terminal window** and run:
 
 ```bash
 npx cloudflared tunnel --url http://localhost:3000
 ```
 
-It prints a public link like:
+It prints a public URL like:
 
 ```
 https://something-random.trycloudflare.com
 ```
 
-Send that link to your friend. It works from anywhere in the world, completely free, no account needed. The tunnel stays alive as long as that terminal window is open.
+Send that to your friend. Works from anywhere, completely free, no account needed.
+
+> **Keep both terminal windows open** — one for the server, one for the tunnel.
+> The tunnel URL changes every time you restart it, so share the new link each session.
 
 ---
 
 ## How to use the board
 
-1. Open the link in your browser
-2. Click **✨ Create New Board** — a room is created and the URL updates with a room code
-3. Click **🔗 Share Link** — the full URL is copied to your clipboard
-4. Send that URL to your friend — they open it and join the same board
-5. Draw together!
+1. Open the link → click **✨ Create New Board**
+2. The URL updates with a room code (e.g. `?room=abc123`)
+3. Click **🔗 Share** — the full URL is copied to your clipboard
+4. Send that URL to your friend
+5. They open it → you're both in the same room → draw live together!
+
+---
+
+## Image panel walkthrough
+
+1. Click **🖼️ Image** in the top bar — or **drag any image file** from your desktop onto the board window
+2. The board splits — drawing on the left, image viewer on the right
+3. Inside the image panel:
+   - **Scroll wheel** to zoom (zooms centred on your cursor position)
+   - **Click and drag** to pan around the image
+   - **+** / **−** buttons for step-by-step zoom
+   - **⊡ Fit** button to reset back to fit-in-panel view
+4. **Drag the divider bar** (the vertical line between the panels) left or right to resize them
+5. Click **✕ Remove** — image closes, drawing canvas takes the full width again
 
 ---
 
 ## Keyboard shortcuts
 
-| Key | Action |
-|-----|--------|
+| Shortcut | Action |
+|----------|--------|
 | `P` | Pen |
+| `H` | Highlighter |
+| `F` | Fill bucket |
 | `E` | Eraser |
 | `T` | Text |
 | `L` | Line |
 | `R` | Rectangle |
 | `C` | Circle |
 | `A` | Arrow |
-| `Ctrl + Z` | Undo |
+| `Ctrl+Z` | Undo |
+| `Ctrl+B` | Bold (text tool) |
+| `Ctrl+I` | Italic (text tool) |
+| `Ctrl+U` | Underline (text tool) |
+| `Enter` | Commit text |
+| `Shift+Enter` | New line in text box |
+| `Escape` | Cancel text |
 
 ---
 
@@ -114,10 +181,11 @@ Send that link to your friend. It works from anywhere in the world, completely f
 ```
 liveboard-local/
 ├── server.js          ← Node.js server (Express + Socket.IO)
-├── package.json       ← Dependencies
+├── package.json       ← Dependencies (express, socket.io)
 ├── START.bat          ← Windows launcher (double-click)
 ├── start.sh           ← Mac/Linux launcher
-├── HOW-TO-USE.txt     ← Plain text instructions
+├── HOW-TO-USE.txt     ← Plain-text quick-start guide
+├── README.md          ← This file
 └── public/
     └── index.html     ← Entire frontend (HTML + CSS + JS in one file)
 ```
@@ -127,35 +195,36 @@ liveboard-local/
 ## How it works
 
 ```
-You draw on your screen
-      ↓
-Your browser sends the stroke to server.js via Socket.IO (WebSocket)
-      ↓
+You draw a stroke
+    ↓
+Each segment (x1,y1 → x2,y2) is sent to server.js via Socket.IO instantly
+    ↓
 server.js broadcasts it to everyone else in the same room
-      ↓
-Their browsers receive it and draw it on their canvas instantly
+    ↓
+Their browser draws that segment on screen — live, no delay
+    ↓
+On pen-up, the full stroke is saved to the room's memory
+    ↓
+Anyone who joins later receives all saved strokes to rebuild the board
 ```
 
-All drawing data is stored in memory on the server. If you restart the server, the boards reset. There is no database.
-
----
-
-## Stopping the server
-
-Press `Ctrl + C` in the terminal window.
+All data lives **in memory** on the server. Restarting the server clears all boards. There is no database.
 
 ---
 
 ## Troubleshooting
 
 **Friend can't connect on same WiFi**
-Your firewall might be blocking port 3000. On Windows, when Node.js first runs it asks for firewall permission — click Allow. Or temporarily disable the firewall to test.
+Windows Firewall may be blocking port 3000. When Node.js first runs, Windows asks for firewall permission — click Allow. Or use the cloudflared tunnel instead.
 
 **`npm` not found**
-Node.js is not installed. Download it from [nodejs.org](https://nodejs.org) and install the LTS version.
+Node.js isn't installed. Download from [nodejs.org](https://nodejs.org), install the LTS version, then restart your terminal.
 
 **Port 3000 already in use**
-Something else is using port 3000. Open `server.js` and change `const PORT = 3000` to any other number like `3001`, then use that port in the URL.
+Open `server.js`, change `const PORT = 3000` to `3001` (or any free number), and update the link accordingly.
 
-**`npx cloudflared` is slow to start**
-The first time it downloads the cloudflared binary (~30MB). Subsequent runs are instant.
+**Cloudflared tunnel drops**
+The free quick tunnel has no uptime guarantee. Just run `npx cloudflared tunnel --url http://localhost:3000` again and share the new URL.
+
+**Lines look choppy on slow connection**
+Each pen segment is sent immediately as you draw. On slow networks there may be slight lag — this is normal. On the same WiFi it's near-instant.
