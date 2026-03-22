@@ -1,160 +1,137 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-const os = require('os');
 const path = require('path');
+const os = require('os');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  maxHttpBufferSize: 1e8 // 100 MB for canvas snapshots
-});
-
+const io = new Server(server);
 const PORT = process.env.PORT || 3000;
 
-// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ── State ──────────────────────────────────────────────
-let drawHistory = [];          // every stroke / action
-let canvasSnapshot = null;     // periodic full-canvas PNG
-let connectedUsers = 0;
-const userNames = new Map();   // socket.id → display name
-let userCounter = 0;
+// ── Room storage ────────────────────────────────
+const rooms = new Map();
 
-// ── Helpers ────────────────────────────────────────────
+function getRoom(id) {
+  if (!rooms.has(id)) {
+    rooms.set(id, { strokes: [], created: Date.now() });
+  }
+  return rooms.get(id);
+}
+
 function getLocalIP() {
-  const interfaces = os.networkInterfaces();
-  for (const name of Object.keys(interfaces)) {
-    for (const iface of interfaces[name]) {
-      if (iface.family === 'IPv4' && !iface.internal) {
-        return iface.address;
-      }
+  const nets = os.networkInterfaces();
+  for (const name of Object.keys(nets)) {
+    for (const n of nets[name]) {
+      if (n.family === 'IPv4' && !n.internal) return n.address;
     }
   }
   return 'localhost';
 }
 
-// ── Socket.IO ──────────────────────────────────────────
+// ── Socket.IO ───────────────────────────────────
+let counter = 0;
+
 io.on('connection', (socket) => {
-  connectedUsers++;
-  userCounter++;
-  const userName = `User ${userCounter}`;
-  userNames.set(socket.id, userName);
+  counter++;
+  const userName = 'User-' + counter;
+  let currentRoom = null;
 
-  console.log(`✅  ${userName} connected (${connectedUsers} online)`);
+  // ── Join Room ──
+  socket.on('join-room', (roomId) => {
+    currentRoom = roomId;
+    socket.join(roomId);
+    const room = getRoom(roomId);
 
-  // Send current state to newly connected user
-  socket.emit('init', {
-    history: drawHistory,
-    snapshot: canvasSnapshot,
-    userName: userName,
-    onlineCount: connectedUsers
-  });
-
-  // Broadcast updated count
-  io.emit('user-count', connectedUsers);
-  io.emit('user-joined', userName);
-
-  // ── Drawing events ──────────────────────────────────
-  socket.on('draw-start', (data) => {
-    data.userName = userNames.get(socket.id);
-    drawHistory.push({ type: 'draw-start', data });
-    socket.broadcast.emit('draw-start', data);
-  });
-
-  socket.on('draw-move', (data) => {
-    data.userName = userNames.get(socket.id);
-    drawHistory.push({ type: 'draw-move', data });
-    socket.broadcast.emit('draw-move', data);
-  });
-
-  socket.on('draw-end', (data) => {
-    data.userName = userNames.get(socket.id);
-    drawHistory.push({ type: 'draw-end', data });
-    socket.broadcast.emit('draw-end', data);
-  });
-
-  // ── Text events ─────────────────────────────────────
-  socket.on('add-text', (data) => {
-    data.userName = userNames.get(socket.id);
-    drawHistory.push({ type: 'add-text', data });
-    socket.broadcast.emit('add-text', data);
-  });
-
-  // ── Shape events ────────────────────────────────────
-  socket.on('add-shape', (data) => {
-    data.userName = userNames.get(socket.id);
-    drawHistory.push({ type: 'add-shape', data });
-    socket.broadcast.emit('add-shape', data);
-  });
-
-  // ── Clear canvas ────────────────────────────────────
-  socket.on('clear-canvas', () => {
-    drawHistory = [];
-    canvasSnapshot = null;
-    io.emit('clear-canvas');
-    console.log(`🗑️  ${userNames.get(socket.id)} cleared the canvas`);
-  });
-
-  // ── Undo last action ───────────────────────────────
-  socket.on('undo', () => {
-    // Remove last stroke (everything between last draw-start and draw-end)
-    let removeFrom = -1;
-    for (let i = drawHistory.length - 1; i >= 0; i--) {
-      if (drawHistory[i].type === 'draw-start' || 
-          drawHistory[i].type === 'add-text' || 
-          drawHistory[i].type === 'add-shape') {
-        removeFrom = i;
-        break;
-      }
-    }
-    if (removeFrom >= 0) {
-      drawHistory = drawHistory.slice(0, removeFrom);
-      io.emit('full-redraw', drawHistory);
-    }
-  });
-
-  // ── Canvas snapshot (keeps history manageable) ──────
-  socket.on('canvas-snapshot', (dataUrl) => {
-    canvasSnapshot = dataUrl;
-    drawHistory = [];
-  });
-
-  // ── Cursor position (live cursors) ──────────────────
-  socket.on('cursor-move', (data) => {
-    socket.broadcast.emit('cursor-move', {
-      id: socket.id,
-      x: data.x,
-      y: data.y,
-      userName: userNames.get(socket.id)
+    // send all existing strokes to new user
+    socket.emit('init', {
+      strokes: room.strokes,
+      userName,
+      userCount: io.sockets.adapter.rooms.get(roomId)?.size || 1
     });
+
+    // tell everyone the count changed
+    io.to(roomId).emit('user-count',
+      io.sockets.adapter.rooms.get(roomId)?.size || 1);
+    socket.to(roomId).emit('toast', userName + ' joined ✅');
+
+    console.log(`✅ ${userName} joined room ${roomId}`);
   });
 
-  // ── Disconnect ──────────────────────────────────────
+  // ── Live pen/eraser segments (real-time) ──
+  socket.on('live-draw', (data) => {
+    if (currentRoom) socket.to(currentRoom).emit('live-draw', data);
+  });
+
+  // ── Finished stroke (stored for undo/replay) ──
+  socket.on('commit-stroke', (stroke) => {
+    if (!currentRoom) return;
+    const room = getRoom(currentRoom);
+    room.strokes.push(stroke);
+    socket.to(currentRoom).emit('new-stroke', stroke);
+  });
+
+  // ── Undo ──
+  socket.on('undo', () => {
+    if (!currentRoom) return;
+    const room = getRoom(currentRoom);
+    if (room.strokes.length > 0) {
+      room.strokes.pop();
+      io.to(currentRoom).emit('full-redraw', room.strokes);
+    }
+  });
+
+  // ── Clear ──
+  socket.on('clear', () => {
+    if (!currentRoom) return;
+    const room = getRoom(currentRoom);
+    room.strokes = [];
+    io.to(currentRoom).emit('full-redraw', []);
+    io.to(currentRoom).emit('toast', userName + ' cleared the board 🗑️');
+  });
+
+  // ── Cursor ──
+  socket.on('cursor', (pos) => {
+    if (currentRoom) {
+      socket.to(currentRoom).emit('cursor', {
+        id: socket.id, x: pos.x, y: pos.y, name: userName
+      });
+    }
+  });
+
+  // ── Disconnect ──
   socket.on('disconnect', () => {
-    connectedUsers--;
-    const name = userNames.get(socket.id);
-    userNames.delete(socket.id);
-    console.log(`❌  ${name} disconnected (${connectedUsers} online)`);
-    io.emit('user-count', connectedUsers);
-    io.emit('user-left', name);
-    io.emit('cursor-remove', socket.id);
+    if (currentRoom) {
+      const count = io.sockets.adapter.rooms.get(currentRoom)?.size || 0;
+      io.to(currentRoom).emit('user-count', count);
+      io.to(currentRoom).emit('cursor-gone', socket.id);
+      io.to(currentRoom).emit('toast', userName + ' left 👋');
+      console.log(`❌ ${userName} left room ${currentRoom}`);
+    }
   });
 });
 
-// ── Start Server ───────────────────────────────────────
+// ── Cleanup old empty rooms every 10 min ──
+setInterval(() => {
+  for (const [id, room] of rooms) {
+    const size = io.sockets.adapter.rooms.get(id)?.size || 0;
+    if (size === 0 && Date.now() - room.created > 3600000) rooms.delete(id);
+  }
+}, 600000);
+
+// ── Start ───────────────────────────────────────
 server.listen(PORT, '0.0.0.0', () => {
-  const localIP = getLocalIP();
+  const ip = getLocalIP();
   console.log('');
-  console.log('╔══════════════════════════════════════════════════════╗');
-  console.log('║          🎨  LiveBoard is RUNNING!                  ║');
-  console.log('╠══════════════════════════════════════════════════════╣');
-  console.log(`║  Local:    http://localhost:${PORT}                   ║`);
-  console.log(`║  Network:  http://${localIP}:${PORT}            ║`);
-  console.log('╠══════════════════════════════════════════════════════╣');
-  console.log('║  Share the Network link with others to collaborate! ║');
-  console.log('║  Press Ctrl+C to stop the server.                   ║');
-  console.log('╚══════════════════════════════════════════════════════╝');
+  console.log('╔═══════════════════════════════════════════════════╗');
+  console.log('║          🎨  LiveBoard is RUNNING!                ║');
+  console.log('╠═══════════════════════════════════════════════════╣');
+  console.log(`║  Local:   http://localhost:${PORT}                  ║`);
+  console.log(`║  Network: http://${ip}:${PORT}                 ║`);
+  console.log('╠═══════════════════════════════════════════════════╣');
+  console.log('║  Open the link → Create Board → Share the URL!   ║');
+  console.log('╚═══════════════════════════════════════════════════╝');
   console.log('');
 });
