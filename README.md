@@ -1,103 +1,161 @@
-# 🎨 LiveBoard v3 — Real-time Collaborative Whiteboard
+# 🎨 LiveBoard — Local Collaborative Whiteboard
 
-Draw together, live, with anyone — on phone, tablet, or laptop.  
-**Fully free. Works on Vercel. No server to maintain.**
-
----
-
-## Why this works (and the others didn't)
-
-| Version | Problem |
-|---------|---------|
-| Original | Socket.IO needs a persistent server — Vercel kills it |
-| v2 (Pusher) | Client events need to be manually enabled; hard to debug |
-| **v3 (Firebase)** | ✅ Firebase manages WebSockets on their servers — works perfectly with Vercel |
+Draw together in real time with anyone — run it on your own PC, share the link, and you're live. No cloud accounts, no Vercel, no Firebase. Just Node.js.
 
 ---
 
-## Setup: 4 steps, ~3 minutes
+## What it does
 
-### Step 1 — Create a free Firebase project
-
-1. Go to **https://console.firebase.google.com**
-2. Sign in with Google → **Add project**
-3. Enter any project name (e.g. `liveboard`) → Continue → Create project
-
-### Step 2 — Enable Realtime Database
-
-1. In your project, click **Build** (left sidebar) → **Realtime Database**
-2. Click **Create Database**
-3. Choose a location (any region is fine)
-4. Select **Start in test mode** → **Enable**
-
-### Step 3 — Get your web config
-
-1. Click the ⚙️ **gear icon** (top left) → **Project settings**
-2. Scroll down to **Your apps** → click the **`</>`** (Web) button
-3. Register the app (any nickname) → copy the `firebaseConfig` object
-
-It looks like this:
-```js
-{
-  apiKey: "AIzaSy...",
-  authDomain: "your-project.firebaseapp.com",
-  databaseURL: "https://your-project-default-rtdb.firebaseio.com",
-  projectId: "your-project",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456:web:abcdef"
-}
-```
-
-### Step 4 — Deploy to Vercel
-
-Push this folder to GitHub, then in **Vercel**:
-- Import the repository
-- No build command, output directory = `/` (root)
-- Deploy!
-
-When you open the app for the first time, it will show a setup screen.  
-Paste your Firebase config JSON and click **Save & Launch**.  
-Config is saved in your browser automatically.
+- **Live drawing sync** — every stroke appears on everyone's screen as you draw it, not just after you lift the pen
+- **Live cursors** — see where your friends' cursors are moving in real time
+- **Multiple tools** — pen, eraser, text, line, rectangle, circle, arrow
+- **Color picker + opacity + brush size**
+- **Undo / Clear** — synced for everyone in the room
+- **Download** — save the board as a PNG
+- **Rooms** — create a board and share the link; each link is its own private room
+- **Works on phone + desktop** — full touch support
 
 ---
 
-## How the real-time sync works
+## Requirements
 
-```
-User A draws →  points written to Firebase Realtime DB
-                    ↓ (Firebase WebSocket push, ~50ms)
-User B's browser  ← receives the update → renders instantly
-```
-
-| Data path | What it stores |
-|-----------|---------------|
-| `boards/{roomId}/strokes` | All committed strokes (permanent) |
-| `boards/{roomId}/live/{userId}` | In-progress stroke (ephemeral) |
-| `boards/{roomId}/cursors/{userId}` | Cursor position (ephemeral) |
-| `boards/{roomId}/presence/{userId}` | Who's online (auto-removed on disconnect) |
+- [Node.js](https://nodejs.org) (download the **LTS** version — free)
+- That's it
 
 ---
 
-## Firebase free tier limits
+## Getting started
 
-| Limit | Free (Spark) plan |
-|-------|------------------|
-| Simultaneous connections | 100 |
-| Storage | 1 GB |
-| Download per month | 10 GB |
-| Cost | $0 |
+### Windows
 
-More than enough for collaborative drawing with friends!
+Double-click **`START.bat`**
 
----
+That's it. It installs packages on first run, then starts the server.
 
-## Local development
+### Mac / Linux
 
-Just open `index.html` in a browser — no npm, no build step.  
-Or use any static file server:
 ```bash
-npx serve .
-# or
-python3 -m http.server 3000
+bash start.sh
 ```
+
+Or manually:
+
+```bash
+npm install
+node server.js
+```
+
+---
+
+## Sharing with your friend
+
+When the server starts, your terminal shows:
+
+```
+╔══════════════════════════════════════════════════════╗
+║           🎨  LiveBoard is running!                  ║
+╠══════════════════════════════════════════════════════╣
+║  Your link:  http://192.168.1.5:3000
+║                                                      ║
+║  1. Share that link with your friend                 ║
+║  2. You both open it → draw together live!           ║
+╚══════════════════════════════════════════════════════╝
+```
+
+### Friend is on the same WiFi
+
+Send them the `http://192.168.x.x:3000` link directly. They open it in their browser and join.
+
+### Friend is on a different network (anywhere in the world)
+
+Run this in a **new terminal window** (Node.js not required for this):
+
+```bash
+npx cloudflared tunnel --url http://localhost:3000
+```
+
+It prints a public link like:
+
+```
+https://something-random.trycloudflare.com
+```
+
+Send that link to your friend. It works from anywhere in the world, completely free, no account needed. The tunnel stays alive as long as that terminal window is open.
+
+---
+
+## How to use the board
+
+1. Open the link in your browser
+2. Click **✨ Create New Board** — a room is created and the URL updates with a room code
+3. Click **🔗 Share Link** — the full URL is copied to your clipboard
+4. Send that URL to your friend — they open it and join the same board
+5. Draw together!
+
+---
+
+## Keyboard shortcuts
+
+| Key | Action |
+|-----|--------|
+| `P` | Pen |
+| `E` | Eraser |
+| `T` | Text |
+| `L` | Line |
+| `R` | Rectangle |
+| `C` | Circle |
+| `A` | Arrow |
+| `Ctrl + Z` | Undo |
+
+---
+
+## Project structure
+
+```
+liveboard-local/
+├── server.js          ← Node.js server (Express + Socket.IO)
+├── package.json       ← Dependencies
+├── START.bat          ← Windows launcher (double-click)
+├── start.sh           ← Mac/Linux launcher
+├── HOW-TO-USE.txt     ← Plain text instructions
+└── public/
+    └── index.html     ← Entire frontend (HTML + CSS + JS in one file)
+```
+
+---
+
+## How it works
+
+```
+You draw on your screen
+      ↓
+Your browser sends the stroke to server.js via Socket.IO (WebSocket)
+      ↓
+server.js broadcasts it to everyone else in the same room
+      ↓
+Their browsers receive it and draw it on their canvas instantly
+```
+
+All drawing data is stored in memory on the server. If you restart the server, the boards reset. There is no database.
+
+---
+
+## Stopping the server
+
+Press `Ctrl + C` in the terminal window.
+
+---
+
+## Troubleshooting
+
+**Friend can't connect on same WiFi**
+Your firewall might be blocking port 3000. On Windows, when Node.js first runs it asks for firewall permission — click Allow. Or temporarily disable the firewall to test.
+
+**`npm` not found**
+Node.js is not installed. Download it from [nodejs.org](https://nodejs.org) and install the LTS version.
+
+**Port 3000 already in use**
+Something else is using port 3000. Open `server.js` and change `const PORT = 3000` to any other number like `3001`, then use that port in the URL.
+
+**`npx cloudflared` is slow to start**
+The first time it downloads the cloudflared binary (~30MB). Subsequent runs are instant.
