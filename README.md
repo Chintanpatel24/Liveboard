@@ -44,26 +44,26 @@ Features Summary
 
 Feature	How
 
-✏️ Pen	Freehand drawing with adjustable size/color/opacity
+- ✏️ Pen	Freehand drawing with adjustable size/color/opacity
 
-🧹 Eraser	Draws white over content
+- 🧹 Eraser	Draws white over content
 
-🔤 Text	Click anywhere → type → Enter to place
+- 🔤 Text	Click anywhere → type → Enter to place
 
-📏 Line / ⬜ Rect / ⭕ Circle / ➡️ Arrow	Click & drag shapes
+- 📏 Line / ⬜ Rect / ⭕ Circle / ➡️ Arrow	Click & drag shapes
 
-🎨 Colors	10 preset + custom color picker
+- 🎨 Colors	10 preset + custom color picker
 
-↩ Undo	Removes last stroke (Ctrl+Z also works)
+- ↩ Undo	Removes last stroke (Ctrl+Z also works)
 
-🗑 Clear	Wipes board for everyone
+- 🗑 Clear	Wipes board for everyone
 
-🔗 Share	Copies the join link to clipboard
+- 🔗 Share	Copies the join link to clipboard
 
-💾 Download	Saves canvas as PNG
+- 💾 Download	Saves canvas as PNG
 
-👆 Live Cursors	See other users' mouse positions with names
+- 👆 Live Cursors	See other users' mouse positions with names
 
-📱 Touch	Works on tablets/phones
+- 📱 Touch	Works on tablets/phones
 
-⌨️ Shortcuts	P=pen, E=eraser, T=text, L=line, R=rect, C=circle
+- ⌨️ Shortcuts	P=pen, E=eraser, T=text, L=line, R=rect, C=circle
