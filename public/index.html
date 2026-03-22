@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LiveBoard - Collaborative Whiteboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- ── Top Bar ──────────────────────────────────── -->
+  <header id="topbar">
+    <div class="topbar-left">
+      <div class="logo">🎨 LiveBoard</div>
+      <div class="user-count">
+        <span class="dot"></span>
+        <span id="onlineCount">1</span> online
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button id="shareBtn" class="btn btn-share" title="Copy join link">
+        🔗 Share Link
+      </button>
+      <button id="undoBtn" class="btn" title="Undo last stroke">↩ Undo</button>
+      <button id="clearBtn" class="btn btn-danger" title="Clear entire board">🗑 Clear All</button>
+    </div>
+  </header>
+
+  <!-- ── Toast Notification ───────────────────────── -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- ── Toolbar ──────────────────────────────────── -->
+  <aside id="toolbar">
+    <!-- Tools -->
+    <div class="tool-section">
+      <label>Tools</label>
+      <div class="tool-grid">
+        <button class="tool-btn active" data-tool="pen" title="Pen">✏️</button>
+        <button class="tool-btn" data-tool="eraser" title="Eraser">🧹</button>
+        <button class="tool-btn" data-tool="text" title="Text">🔤</button>
+        <button class="tool-btn" data-tool="line" title="Line">📏</button>
+        <button class="tool-btn" data-tool="rect" title="Rectangle">⬜</button>
+        <button class="tool-btn" data-tool="circle" title="Circle">⭕</button>
+        <button class="tool-btn" data-tool="arrow" title="Arrow">➡️</button>
+      </div>
+    </div>
+
+    <!-- Colors -->
+    <div class="tool-section">
+      <label>Color</label>
+      <div class="color-grid">
+        <button class="color-btn active" data-color="#222222" style="background:#222222" title="Black"></button>
+        <button class="color-btn" data-color="#e74c3c" style="background:#e74c3c" title="Red"></button>
+        <button class="color-btn" data-color="#e67e22" style="background:#e67e22" title="Orange"></button>
+        <button class="color-btn" data-color="#f1c40f" style="background:#f1c40f" title="Yellow"></button>
+        <button class="color-btn" data-color="#2ecc71" style="background:#2ecc71" title="Green"></button>
+        <button class="color-btn" data-color="#3498db" style="background:#3498db" title="Blue"></button>
+        <button class="color-btn" data-color="#9b59b6" style="background:#9b59b6" title="Purple"></button>
+        <button class="color-btn" data-color="#1abc9c" style="background:#1abc9c" title="Teal"></button>
+        <button class="color-btn" data-color="#e91e63" style="background:#e91e63" title="Pink"></button>
+        <button class="color-btn" data-color="#ffffff" style="background:#ffffff; border:2px solid #ccc" title="White"></button>
+      </div>
+      <input type="color" id="customColor" value="#222222" title="Custom color" />
+    </div>
+
+    <!-- Brush Size -->
+    <div class="tool-section">
+      <label>Size: <span id="sizeValue">3</span>px</label>
+      <input type="range" id="brushSize" min="1" max="50" value="3" />
+    </div>
+
+    <!-- Opacity -->
+    <div class="tool-section">
+      <label>Opacity: <span id="opacityValue">100</span>%</label>
+      <input type="range" id="brushOpacity" min="10" max="100" value="100" />
+    </div>
+
+    <!-- Font Size (for text tool) -->
+    <div class="tool-section" id="fontSizeSection" style="display:none">
+      <label>Font Size: <span id="fontSizeValue">20</span>px</label>
+      <input type="range" id="fontSize" min="10" max="80" value="20" />
+    </div>
+
+    <!-- Download -->
+    <div class="tool-section">
+      <button id="downloadBtn" class="btn btn-full">💾 Save as PNG</button>
+    </div>
+  </aside>
+
+  <!-- ── Canvas Area ──────────────────────────────── -->
+  <main id="canvasArea">
+    <canvas id="whiteboard"></canvas>
+    <!-- Live cursors rendered here -->
+    <div id="cursorsLayer"></div>
+    <!-- Text input overlay -->
+    <textarea id="textInput" class="text-input hidden" rows="1"></textarea>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
