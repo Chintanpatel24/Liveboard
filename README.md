@@ -16,16 +16,15 @@ text
 
 <pre>
 ╔══════════════════════════════════════════════════════╗
-║          🎨  LiveBoard is RUNNING!                  ║
+║          🎨  LiveBoard is RUNNING!                   ║
 ╠══════════════════════════════════════════════════════╣
 ║  Local:    http://localhost:3000                     ║
-║  Network:  http://192.168.1.42:3000                 ║
+║  Network:  http://192.168.1.42:3000                  ║
 ╠══════════════════════════════════════════════════════╣
-║  Share the Network link with others to collaborate! ║
-║  Press Ctrl+C to stop the server.                   ║
+║  Share the Network link with others to collaborate!  ║
+║  Press Ctrl+C to stop the server.                    ║
 ╚══════════════════════════════════════════════════════╝
-How It Works
-text
+
 
 ┌─────────────┐         WebSocket (Socket.IO)        ┌─────────────┐
 │   User A    │◄────────────────────────────────────►│   Server    │
@@ -38,7 +37,17 @@ text
 │   User B    │◄────────────────────────────────────►│  Socket.IO  │
 │  (Browser)  │         real-time sync               └─────────────┘
 └─────────────┘
+
+   You (Browser)                    Server (Node.js)                Friend (Browser)
+   ┌──────────┐                    ┌──────────────┐                ┌──────────┐
+   │ Draw on  │── live-draw ──────>│  Broadcasts  │── live-draw ──>│ Sees it  │
+   │ canvas   │── commit-stroke ──>│  Stores it   │── new-stroke ─>│ instantly │
+   │          │<── full-redraw ────│  (on undo)   │── full-redraw─>│          │
+   │ See live │<── cursor ─────────│              │<── cursor ─────│ Moves    │
+   │ cursors  │                    │  Room: abc12 │                │ mouse    │
+   └──────────┘                    └──────────────┘                └──────────┘
 </pre>
+
 
 Features Summary
 
