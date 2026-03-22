@@ -1,0 +1,49 @@
+═══════════════════════════════════════════════════
+  🎨 LiveBoard — How to Use
+═══════════════════════════════════════════════════
+
+REQUIREMENTS
+  • Node.js installed on your PC
+    Download from: https://nodejs.org  (click the LTS version)
+
+
+STEP 1 — Start the server
+───────────────────────────
+  Windows:  Double-click  START.bat
+  Mac/Linux: Open terminal here, run:  bash start.sh
+
+  (First run downloads packages — takes ~10 seconds)
+
+
+STEP 2 — Share the link with your friend
+─────────────────────────────────────────
+  After starting, the terminal shows something like:
+
+    Your link:  http://192.168.1.5:3000
+
+  → If your friend is on the SAME WiFi:
+      Send them that link exactly as shown.
+      They open it in their browser and join!
+
+  → If your friend is on a DIFFERENT network (anywhere in the world):
+      Run this command in a NEW terminal window:
+
+        npx cloudflared tunnel --url http://localhost:3000
+
+      It gives you a link like:
+        https://something-random.trycloudflare.com
+
+      Send THAT link to your friend. Works from anywhere!
+
+
+STEP 3 — Draw together
+────────────────────────
+  You both open the link → click "Create New Board" or join the same room.
+  Everything you draw appears on their screen live, and vice versa!
+
+
+STOP THE SERVER
+  Press  Ctrl + C  in the terminal window.
+
+
+═══════════════════════════════════════════════════

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>LiveBoard 🎨</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--top:54px;--side:208px;--accent:#3b82f6;--danger:#ef4444}
+html,body{height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;color:#222}
+.hidden{display:none!important}
+
+/* LANDING */
+#landing{display:flex;align-items:center;justify-content:center;height:100%;
+  background:linear-gradient(135deg,#1e3a5f,#3b82f6,#7c3aed)}
+.lcard{background:#fff;border-radius:20px;padding:50px 44px;text-align:center;
+  box-shadow:0 24px 64px rgba(0,0,0,.25);max-width:420px;width:90%}
+.lcard .icon{font-size:58px;margin-bottom:8px}
+.lcard h1{font-size:32px;margin-bottom:6px}
+.lcard p{color:#666;font-size:15px;line-height:1.6;margin-bottom:28px}
+.btn{padding:14px 28px;border:none;border-radius:12px;font-size:16px;font-weight:600;
+  cursor:pointer;transition:.15s;width:100%;background:var(--accent);color:#fff}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn.sec{background:#f1f5f9;color:#333;width:auto;padding:14px 20px}
+.btn.sec:hover{background:#e2e8f0}
+.divider{margin:22px 0;font-size:13px;color:#bbb;display:flex;align-items:center;gap:10px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#e5e7eb}
+.jrow{display:flex;gap:8px}
+.jrow input{flex:1;padding:14px 15px;border:2px solid #e2e8f0;border-radius:12px;
+  font-size:15px;outline:none;transition:.2s}
+.jrow input:focus{border-color:var(--accent)}
+
+/* TOP BAR */
+#topbar{position:fixed;top:0;left:0;right:0;height:var(--top);background:#fff;
+  box-shadow:0 2px 16px rgba(0,0,0,.08);display:flex;align-items:center;
+  justify-content:space-between;padding:0 16px;z-index:100}
+.tb-l,.tb-r{display:flex;align-items:center;gap:10px}
+.logo{font-weight:800;font-size:17px;user-select:none}
+.badge{display:flex;align-items:center;gap:6px;font-size:12px;color:#555;
+  background:#f1f5f9;padding:4px 11px;border-radius:20px}
+.bdot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tbtn{padding:7px 13px;border:1.5px solid #ddd;border-radius:9px;background:#fff;
+  cursor:pointer;font-size:13px;transition:.15s;font-weight:500}
+.tbtn:hover{background:#f5f5f5}
+.tbtn.ac{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tbtn.ac:hover{background:#2563eb}
+.tbtn.dg{color:var(--danger);border-color:#fca5a5}
+.tbtn.dg:hover{background:#fef2f2}
+
+/* TOOLBAR */
+#toolbar{position:fixed;top:var(--top);left:0;width:var(--side);
+  height:calc(100% - var(--top));background:#fff;
+  box-shadow:2px 0 12px rgba(0,0,0,.05);padding:14px 12px;overflow-y:auto;z-index:90}
+.sec{margin-bottom:18px}
+.stitle{font-size:9.5px;text-transform:uppercase;letter-spacing:.8px;
+  color:#ccc;font-weight:700;margin-bottom:7px}
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.tool{aspect-ratio:1;border:2px solid transparent;border-radius:10px;background:#f7f7f8;
+  cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.tool:hover{background:#eee}
+.tool.on{border-color:var(--accent);background:#eff6ff}
+.cgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:7px}
+.clr{aspect-ratio:1;border:3px solid transparent;border-radius:50%;cursor:pointer;transition:.15s}
+.clr:hover,.clr.on{transform:scale(1.18)}
+.clr.on{border-color:var(--accent)}
+#colorPick{width:100%;height:28px;border:none;border-radius:7px;cursor:pointer;background:none}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.upip{display:flex;align-items:center;gap:8px;padding:5px 4px;
+  border-radius:7px;font-size:12px;font-weight:500;color:#444;margin-bottom:3px}
+.udot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+
+/* CANVAS */
+#wrap{position:fixed;top:var(--top);left:var(--side);right:0;bottom:0;overflow:hidden;
+  background-image:radial-gradient(circle,#d1d5db 1px,transparent 1px);
+  background-size:24px 24px;background-color:#eef0f3}
+#mc,#lc,#pc{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
+#mc{background:#fff}
+#lc,#pc{pointer-events:none}
+#cl{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:50;overflow:hidden}
+.rc{position:absolute;pointer-events:none;transition:left 60ms linear,top 60ms linear}
+.rname{position:absolute;top:18px;left:4px;font-size:11px;font-weight:600;color:#fff;
+  padding:2px 7px;border-radius:6px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+#textBox{position:absolute;background:rgba(255,255,255,.92);
+  border:2px dashed var(--accent);border-radius:4px;padding:4px 10px;
+  font-family:inherit;font-size:24px;outline:none;resize:none;min-width:80px;z-index:60}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+  background:#1e293b;color:#fff;padding:10px 24px;border-radius:12px;font-size:14px;
+  font-weight:500;z-index:999;box-shadow:0 6px 24px rgba(0,0,0,.3);
+  transition:opacity .3s,transform .3s}
+.toast.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(8px)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:700px){
+  :root{--side:56px}
+  #toolbar{padding:8px 4px}
+  .stitle,#colorPick,#fontSec,#userSec{display:none!important}
+  .tgrid{grid-template-columns:1fr 1fr}
+  .cgrid{grid-template-columns:repeat(3,1fr)}
+  .tbtn{padding:6px 8px;font-size:12px}
+  .logo{font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="landing">
+<div class="lcard">
+  <div class="icon">🎨</div>
+  <h1>LiveBoard</h1>
+  <p>Real-time collaborative whiteboard.<br/>Draw together, live, from any device.</p>
+  <button class="btn" id="createBtn">✨ Create New Board</button>
+  <div class="divider">or join an existing board</div>
+  <div class="jrow">
+    <input type="text" id="joinInput" placeholder="Paste room link or code…"/>
+    <button class="btn sec" id="joinBtn">Join →</button>
+  </div>
+</div>
+</div>
+
+<!-- BOARD -->
+<div id="board" class="hidden">
+  <header id="topbar">
+    <div class="tb-l">
+      <span class="logo">🎨 LiveBoard</span>
+      <span class="badge"><span class="bdot"></span><span id="onlineNum">1</span> online</span>
+    </div>
+    <div class="tb-r">
+      <button class="tbtn ac" id="shareBtn">🔗 Share Link</button>
+      <button class="tbtn"    id="undoBtn">↩ Undo</button>
+      <button class="tbtn dg" id="clearBtn">🗑 Clear</button>
+      <button class="tbtn"    id="dlBtn">💾 Save</button>
+    </div>
+  </header>
+
+  <aside id="toolbar">
+    <div class="sec">
+      <div class="stitle">TOOLS</div>
+      <div class="tgrid">
+        <button class="tool on" data-t="pen"    title="Pen (P)">✏️</button>
+        <button class="tool"    data-t="eraser" title="Eraser (E)">🧹</button>
+        <button class="tool"    data-t="text"   title="Text (T)">🔤</button>
+        <button class="tool"    data-t="line"   title="Line (L)">╱</button>
+        <button class="tool"    data-t="rect"   title="Rect (R)">▭</button>
+        <button class="tool"    data-t="circle" title="Circle (C)">◯</button>
+        <button class="tool"    data-t="arrow"  title="Arrow (A)">→</button>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="stitle">COLOR</div>
+      <div class="cgrid">
+        <button class="clr on" data-c="#1a1a1a" style="background:#1a1a1a"></button>
+        <button class="clr" data-c="#ef4444" style="background:#ef4444"></button>
+        <button class="clr" data-c="#f97316" style="background:#f97316"></button>
+        <button class="clr" data-c="#eab308" style="background:#eab308"></button>
+        <button class="clr" data-c="#22c55e" style="background:#22c55e"></button>
+        <button class="clr" data-c="#3b82f6" style="background:#3b82f6"></button>
+        <button class="clr" data-c="#8b5cf6" style="background:#8b5cf6"></button>
+        <button class="clr" data-c="#ec4899" style="background:#ec4899"></button>
+        <button class="clr" data-c="#06b6d4" style="background:#06b6d4"></button>
+        <button class="clr" data-c="#ffffff" style="background:#fff;border:2px solid #ddd"></button>
+      </div>
+      <input type="color" id="colorPick" value="#1a1a1a"/>
+    </div>
+    <div class="sec">
+      <div class="stitle">SIZE · <span id="szV">4</span>px</div>
+      <input type="range" id="szSlider" min="1" max="60" value="4"/>
+    </div>
+    <div class="sec">
+      <div class="stitle">OPACITY · <span id="opV">100</span>%</div>
+      <input type="range" id="opSlider" min="10" max="100" value="100"/>
+    </div>
+    <div class="sec" id="fontSec" style="display:none">
+      <div class="stitle">FONT · <span id="fzV">24</span>px</div>
+      <input type="range" id="fzSlider" min="12" max="96" value="24"/>
+    </div>
+    <div class="sec" id="userSec"><div class="stitle">WHO'S HERE</div></div>
+  </aside>
+
+  <main id="wrap">
+    <canvas id="mc"></canvas>
+    <canvas id="lc"></canvas>
+    <canvas id="pc"></canvas>
+    <div id="cl"></div>
+    <textarea id="textBox" class="hidden"></textarea>
+  </main>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+(function(){
+'use strict';
+
+const W=2400, H=1600;
+const UCOLORS=['#3b82f6','#ef4444','#22c55e','#f97316','#8b5cf6','#06b6d4','#ec4899','#eab308','#14b8a6','#f43f5e'];
+
+const $=s=>document.querySelector(s);
+const landingEl=$('#landing'), boardEl=$('#board');
+const mc=$('#mc'), lc=$('#lc'), pc=$('#pc');
+const ctx=mc.getContext('2d'), lctx=lc.getContext('2d'), pctx=pc.getContext('2d');
+const cl=$('#cl'), textBox=$('#textBox'), toastEl=$('#toast'), userSec=$('#userSec');
+
+const socket = io();
+
+let roomId=null, myName='', myId=socket.id;
+let strokes=[], curStroke=null;
+let tool='pen', color='#1a1a1a', sz=4, op=1, fz=24;
+let drawing=false, shapeStart=null;
+const liveMap={}, cursors={}, members={};
+let liveTimer=null, curTimer=null;
+
+/* ── ROUTING ── */
+$('#createBtn').addEventListener('click',()=>{
+  const id=Math.random().toString(36).substr(2,8);
+  history.pushState({},'','?room='+id);
+  enterBoard(id);
+});
+$('#joinBtn').addEventListener('click',()=>{
+  let v=($('#joinInput').value||'').trim(); if(!v) return;
+  let id=v; try{id=new URL(v).searchParams.get('room')||v;}catch(_){}
+  history.pushState({},'','?room='+id);
+  enterBoard(id);
+});
+
+const startRoom=new URLSearchParams(location.search).get('room');
+if(startRoom) enterBoard(startRoom);
+
+function enterBoard(id){
+  roomId=id;
+  landingEl.classList.add('hidden');
+  boardEl.classList.remove('hidden');
+  [mc,lc,pc].forEach(c=>{c.width=W;c.height=H;});
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+  socket.emit('join',id);
+}
+
+/* ── SOCKET EVENTS ── */
+socket.on('init',d=>{
+  myName=d.name; myId=socket.id;
+  strokes=d.strokes||[];
+  $('#onlineNum').textContent=d.userCount;
+  redrawAll();
+  showToast('Welcome '+myName+'! 👋');
+});
+
+socket.on('stroke',s=>{
+  strokes.push(s);
+  if(s.type==='shape'||s.type==='text') renderStroke(ctx,s);
+  // paths already showed via live stream
+});
+
+socket.on('live',d=>{
+  liveMap[d.uid]=d;
+  redrawLive();
+});
+socket.on('live-end',uid=>{
+  delete liveMap[uid];
+  redrawLive();
+});
+
+socket.on('redraw',arr=>{
+  strokes=arr; redrawAll();
+});
+
+socket.on('user-count',n=>$('#onlineNum').textContent=n);
+socket.on('toast',msg=>showToast(msg));
+
+socket.on('cursor',d=>{
+  let el=cursors[d.id];
+  if(!el){
+    el=document.createElement('div'); el.className='rc';
+    const clr=UCOLORS[Object.keys(cursors).length%UCOLORS.length];
+    el.innerHTML=`<svg width="14" height="20" viewBox="0 0 14 20" fill="${clr}" xmlns="http://www.w3.org/2000/svg"><path d="M0 0 L0 16 L4 11.5 L6.5 18 L8.5 17 L6 10.5 L11 10.5 Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="rname" style="background:${clr}">${d.name}</div>`;
+    cl.appendChild(el); cursors[d.id]=el;
+    members[d.id]={name:d.name,color:clr};
+    renderPresence();
+  }
+  const r=mc.getBoundingClientRect();
+  el.style.left=(d.x*r.width/W)+'px'; el.style.top=(d.y*r.height/H)+'px';
+});
+socket.on('cursor-gone',id=>{
+  if(cursors[id]){cursors[id].remove();delete cursors[id];}
+  delete members[id]; renderPresence();
+});
+
+/* ── DRAW HELPERS ── */
+function drawPath(c,s){
+  const p=s.points; if(!p||!p.length) return;
+  if(p.length===1){
+    c.save();c.beginPath();
+    c.arc(p[0].x,p[0].y,s.eraser?s.width*1.5:s.width/2,0,Math.PI*2);
+    c.fillStyle=s.eraser?'#fff':s.color; c.globalAlpha=s.eraser?1:s.opacity;
+    c.fill();c.restore();return;
+  }
+  c.save();
+  c.strokeStyle=s.eraser?'#fff':s.color; c.lineWidth=s.eraser?s.width*3:s.width;
+  c.globalAlpha=s.eraser?1:s.opacity; c.lineCap='round'; c.lineJoin='round';
+  c.beginPath(); c.moveTo(p[0].x,p[0].y);
+  for(let i=1;i<p.length-1;i++){
+    const mx=(p[i].x+p[i+1].x)/2,my=(p[i].y+p[i+1].y)/2;
+    c.quadraticCurveTo(p[i].x,p[i].y,mx,my);
+  }
+  c.lineTo(p[p.length-1].x,p[p.length-1].y); c.stroke(); c.restore();
+}
+function drawShape(c,s){
+  const{x1,y1,x2,y2,color:col,width:w,opacity:a}=s;
+  c.save(); c.strokeStyle=col; c.lineWidth=w; c.globalAlpha=a; c.lineCap='round';
+  switch(s.shape){
+    case'line':c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();break;
+    case'rect':c.strokeRect(Math.min(x1,x2),Math.min(y1,y2),Math.abs(x2-x1),Math.abs(y2-y1));break;
+    case'circle':{const rx=Math.abs(x2-x1)/2,ry=Math.abs(y2-y1)/2;
+      c.beginPath();c.ellipse(Math.min(x1,x2)+rx,Math.min(y1,y2)+ry,rx||1,ry||1,0,0,Math.PI*2);c.stroke();break;}
+    case'arrow':{c.fillStyle=col;c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();
+      const a2=Math.atan2(y2-y1,x2-x1),h=Math.max(14,w*4);
+      c.beginPath();c.moveTo(x2,y2);
+      c.lineTo(x2-h*Math.cos(a2-Math.PI/6),y2-h*Math.sin(a2-Math.PI/6));
+      c.lineTo(x2-h*Math.cos(a2+Math.PI/6),y2-h*Math.sin(a2+Math.PI/6));
+      c.closePath();c.fill();break;}
+  }
+  c.restore();
+}
+function drawText(c,s){
+  c.save(); c.font=s.size+'px "Segoe UI",system-ui,sans-serif';
+  c.fillStyle=s.color; c.globalAlpha=s.opacity;
+  (s.text||'').split('\n').forEach((l,i)=>c.fillText(l,s.x,s.y+i*s.size*1.25));
+  c.restore();
+}
+function renderStroke(c,s){
+  if(!s)return;
+  if(s.type==='path') drawPath(c,s);
+  if(s.type==='shape') drawShape(c,s);
+  if(s.type==='text') drawText(c,s);
+}
+function redrawAll(){
+  ctx.save();ctx.fillStyle='#fff';ctx.globalAlpha=1;ctx.fillRect(0,0,W,H);ctx.restore();
+  strokes.forEach(s=>renderStroke(ctx,s));
+}
+function redrawLive(){
+  lctx.clearRect(0,0,W,H);
+  Object.values(liveMap).forEach(s=>renderStroke(lctx,s));
+}
+
+/* ── POINTER EVENTS ── */
+function cxy(e){
+  const r=mc.getBoundingClientRect(); let cx,cy;
+  if(e.touches&&e.touches.length){cx=e.touches[0].clientX;cy=e.touches[0].clientY;}
+  else if(e.changedTouches&&e.changedTouches.length){cx=e.changedTouches[0].clientX;cy=e.changedTouches[0].clientY;}
+  else{cx=e.clientX;cy=e.clientY;}
+  return{x:(cx-r.left)*(W/r.width),y:(cy-r.top)*(H/r.height)};
+}
+
+mc.addEventListener('mousedown',onDown);
+mc.addEventListener('mousemove',onMove);
+mc.addEventListener('mouseup',onUp);
+mc.addEventListener('mouseleave',onUp);
+mc.addEventListener('touchstart',onDown,{passive:false});
+mc.addEventListener('touchmove',onMove,{passive:false});
+mc.addEventListener('touchend',onUp);
+mc.addEventListener('touchcancel',onUp);
+
+function onDown(e){
+  e.preventDefault(); const p=cxy(e);
+  if(tool==='text'){openText(p.x,p.y);return;}
+  drawing=true;
+  if(['line','rect','circle','arrow'].includes(tool)){shapeStart=p;return;}
+  curStroke={type:'path',color,width:sz,opacity:op,eraser:tool==='eraser',points:[p]};
+}
+function onMove(e){
+  e.preventDefault(); const p=cxy(e);
+  // Cursor throttled
+  clearTimeout(curTimer);
+  curTimer=setTimeout(()=>socket.emit('cursor',p),80);
+  if(!drawing)return;
+  if(shapeStart){
+    pctx.clearRect(0,0,W,H);
+    drawShape(pctx,{shape:tool,x1:shapeStart.x,y1:shapeStart.y,x2:p.x,y2:p.y,color,width:sz,opacity:op});
+    return;
+  }
+  if(!curStroke)return;
+  const last=curStroke.points[curStroke.points.length-1];
+  curStroke.points.push(p);
+  // Draw locally immediately
+  ctx.save();ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);
+  ctx.strokeStyle=curStroke.eraser?'#fff':color; ctx.lineWidth=curStroke.eraser?sz*3:sz;
+  ctx.globalAlpha=curStroke.eraser?1:op; ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.stroke();ctx.restore();
+  // Send live to others (throttled)
+  clearTimeout(liveTimer);
+  liveTimer=setTimeout(()=>socket.emit('live',{type:'path',color,width:sz,opacity:op,eraser:curStroke.eraser,points:curStroke.points}),35);
+}
+function onUp(e){
+  if(!drawing)return; drawing=false;
+  clearTimeout(liveTimer); socket.emit('live-end');
+  if(shapeStart){
+    pctx.clearRect(0,0,W,H); const p=cxy(e);
+    const s={type:'shape',shape:tool,x1:shapeStart.x,y1:shapeStart.y,x2:p.x,y2:p.y,color,width:sz,opacity:op};
+    drawShape(ctx,s); strokes.push(s); socket.emit('stroke',s); shapeStart=null; return;
+  }
+  if(curStroke&&curStroke.points.length){
+    strokes.push(curStroke); socket.emit('stroke',curStroke); curStroke=null;
+  }
+}
+
+/* ── TEXT ── */
+function openText(cx,cy){
+  const r=mc.getBoundingClientRect(),sx=r.width/W,sy=r.height/H;
+  textBox.classList.remove('hidden');
+  textBox.style.left=(cx*sx)+'px'; textBox.style.top=(cy*sy)+'px';
+  textBox.style.fontSize=(fz*sx)+'px'; textBox.style.color=color;
+  textBox.value=''; textBox._cx=cx; textBox._cy=cy;
+  setTimeout(()=>textBox.focus(),20);
+}
+function commitText(){
+  const t=(textBox.value||'').trim(); textBox.classList.add('hidden'); if(!t)return;
+  const s={type:'text',text:t,x:textBox._cx,y:textBox._cy+fz,color,size:fz,opacity:op};
+  drawText(ctx,s); strokes.push(s); socket.emit('stroke',s);
+}
+textBox.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();commitText();}
+  if(e.key==='Escape')textBox.classList.add('hidden');
+});
+textBox.addEventListener('blur',commitText);
+
+/* ── PRESENCE ── */
+function renderPresence(){
+  userSec.innerHTML='<div class="stitle">WHO\'S HERE</div>';
+  for(const[id,m]of Object.entries(members)){
+    const d=document.createElement('div');d.className='upip';
+    d.innerHTML=`<div class="udot" style="background:${m.color}"></div><span>${m.name}</span>`;
+    userSec.appendChild(d);
+  }
+}
+
+/* ── TOOLBAR ── */
+document.querySelectorAll('.tool').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelector('.tool.on')?.classList.remove('on');
+  b.classList.add('on'); tool=b.dataset.t;
+  mc.style.cursor=tool==='eraser'?'cell':tool==='text'?'text':'crosshair';
+  $('#fontSec').style.display=tool==='text'?'':'none';
+}));
+document.querySelectorAll('.clr').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelector('.clr.on')?.classList.remove('on');
+  b.classList.add('on'); color=b.dataset.c; $('#colorPick').value=color;
+}));
+$('#colorPick').addEventListener('input',e=>{color=e.target.value;document.querySelector('.clr.on')?.classList.remove('on');});
+$('#szSlider').addEventListener('input',e=>{sz=+e.target.value;$('#szV').textContent=sz;});
+$('#opSlider').addEventListener('input',e=>{op=+e.target.value/100;$('#opV').textContent=e.target.value;});
+$('#fzSlider').addEventListener('input',e=>{fz=+e.target.value;$('#fzV').textContent=fz;});
+
+$('#shareBtn').addEventListener('click',()=>{
+  const u=location.href;
+  if(navigator.clipboard){navigator.clipboard.writeText(u).then(()=>showToast('Link copied! 🔗'));}
+  else prompt('Copy this link:',u);
+});
+$('#undoBtn').addEventListener('click',()=>socket.emit('undo'));
+$('#clearBtn').addEventListener('click',()=>{if(confirm('Clear the board for everyone?'))socket.emit('clear');});
+$('#dlBtn').addEventListener('click',()=>{
+  const a=document.createElement('a');
+  a.download='liveboard-'+Date.now()+'.png'; a.href=mc.toDataURL(); a.click();
+  showToast('Saved! 💾');
+});
+document.addEventListener('keydown',e=>{
+  if(e.target===textBox)return;
+  if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();socket.emit('undo');return;}
+  const m={p:'pen',e:'eraser',t:'text',l:'line',r:'rect',c:'circle',a:'arrow'};
+  if(m[e.key]&&!e.ctrlKey&&!e.metaKey){
+    document.querySelector('.tool.on')?.classList.remove('on');
+    document.querySelector(`.tool[data-t="${m[e.key]}"]`)?.classList.add('on');
+    tool=m[e.key];
+    mc.style.cursor=tool==='eraser'?'cell':tool==='text'?'text':'crosshair';
+    $('#fontSec').style.display=tool==='text'?'':'none';
+  }
+});
+
+function showToast(msg,ms=2800){
+  toastEl.textContent=msg;
+  toastEl.classList.remove('hidden');toastEl.classList.add('show');
+  clearTimeout(toastEl._t);
+  toastEl._t=setTimeout(()=>{toastEl.classList.remove('show');
+    setTimeout(()=>toastEl.classList.add('hidden'),300);},ms);
+}
+})();
+</script>
+</body>
+</html>
