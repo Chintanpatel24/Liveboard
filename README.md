@@ -1,6 +1,10 @@
-# 🎨 LiveBoard — Local Collaborative Whiteboard
+<div align=center>
+<img src=image/live.png>
+</div>
 
-Draw together in real time with anyone. Run it on your PC, share the link, and you're both live. No cloud, no accounts, no Vercel. Just Node.js.
+># LiveBoard — Local Collaborative Whiteboard
+
+- Draw together in real time with anyone. Run it on your PC, share the link, and you're both live. No cloud, no accounts, no Vercel. Just Node.js.
 
 ---
 
