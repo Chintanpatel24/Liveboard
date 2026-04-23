@@ -10,7 +10,7 @@
 
 ## What's inside
 
-### 🖊️ Drawing Tools
+### Drawing Tools
 | Tool | Key | Description |
 |------|-----|-------------|
 | Pen | `P` | Smooth freehand drawing |
@@ -19,7 +19,7 @@
 | Eraser | `E` | Erase parts of the drawing |
 | Text | `T` | Click to place text anywhere |
 
-### 🔷 Shapes
+### Shapes
 | Shape | Key | Description |
 |-------|-----|-------------|
 | Line | `L` | Straight line |
@@ -32,19 +32,19 @@
 | Diamond | — | Outlined diamond |
 | Star | — | 5-point star |
 
-### ✍️ Text Options
+### Text Options
 - **Font size** slider (10–120px)
 - **Bold**, *Italic*, Underline toggles
 - **Font family** — Default / Serif / Monospace / Impact / Cursive
 - `Ctrl+B` bold · `Ctrl+I` italic · `Ctrl+U` underline (while text tool active)
 
-### 🎨 Colour & Style
+### Colour & Style
 - 10 preset colours + custom colour picker
 - **Brush size** slider (1–60px)
 - **Opacity** slider (10–100%)
 
-### 🖼️ Image Panel
-- Click **🖼️ Image** button in the top bar — or **drag & drop** any image file onto the board
+###  Image Panel
+- Click **Image** button in the top bar — or **drag & drop** any image file onto the board
 - The window **splits**: drawing canvas on the left, image viewer on the right
 - **Zoom** in/out with scroll wheel or +/− buttons
 - **Pan** by clicking and dragging inside the image panel
@@ -52,7 +52,7 @@
 - Drag the **vertical divider bar** to resize the two panels
 - Click **✕ Remove** to dismiss the image — drawing canvas expands back to full width
 
-### 👥 Collaboration
+### Collaboration
 - **Live pen strokes** — others see your drawing segment by segment as you draw
 - **Live cursors** — see everyone's cursor moving in real time with their name
 - **Presence list** — sidebar shows who's currently in the room
@@ -60,8 +60,8 @@
 - **Clear** — wipes the board for everyone
 
 ### Other
-- **💾 Save** — download the board as a PNG
-- **🔗 Share** — copies the current room URL to clipboard
+- **Save** — download the board as a PNG
+- **Share** — copies the current room URL to clipboard
 - Full **touch support** (phones + tablets)
 - Responsive layout — sidebar collapses on mobile
 
@@ -101,11 +101,11 @@ node server.js
 When the server starts, the terminal shows your link:
 
 ```
-╔══════════════════════════════════════════════════════╗
-║           🎨  LiveBoard is running!                  ║
-╠══════════════════════════════════════════════════════╣
-║  Your link:  http://192.168.1.5:3000
-╚══════════════════════════════════════════════════════╝
+╔═══════════════════════════════════════════════════════╗
+║           🎨  LiveBoard is running!                   ║
+╠═══════════════════════════════════════════════════════╣
+║  Your link:  http://192.168.1.5:3000                  ║
+╚═══════════════════════════════════════════════════════╝
 ```
 
 ### Friend is on the same WiFi
@@ -135,9 +135,9 @@ Send that to your friend. Works from anywhere, completely free, no account neede
 
 ## How to use the board
 
-1. Open the link → click **✨ Create New Board**
+1. Open the link → click **Create New Board**
 2. The URL updates with a room code (e.g. `?room=abc123`)
-3. Click **🔗 Share** — the full URL is copied to your clipboard
+3. Click **Share** — the full URL is copied to your clipboard
 4. Send that URL to your friend
 5. They open it → you're both in the same room → draw live together!
 
@@ -145,7 +145,7 @@ Send that to your friend. Works from anywhere, completely free, no account neede
 
 ## Image panel walkthrough
 
-1. Click **🖼️ Image** in the top bar — or **drag any image file** from your desktop onto the board window
+1. Click **Image** in the top bar — or **drag any image file** from your desktop onto the board window
 2. The board splits — drawing on the left, image viewer on the right
 3. Inside the image panel:
    - **Scroll wheel** to zoom (zooms centred on your cursor position)
